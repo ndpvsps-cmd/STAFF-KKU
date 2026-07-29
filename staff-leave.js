@@ -463,8 +463,8 @@
     }
     if (ctx) {
       span.classList.add("sl-chip-editable");
-      span.title = "แตะเพื่อบันทึกสถานะขาด/ลาของวันนี้";
-      span.addEventListener("click", () => openQuickEditModal(staffMember, ctx.dateStr, leave));
+      span.title = "แตะเพื่อบันทึกสถานะขาด/ลา หรือลบออกจากห้อง";
+      span.addEventListener("click", () => openQuickEditModal(staffMember, ctx.dateStr, leave, ctx.assignment));
     }
     return span;
   }
@@ -529,7 +529,7 @@
         lbl.textContent = ROLE_LABELS[role];
         const chips = document.createElement("div");
         chips.className = "sl-chips";
-        people.forEach((p) => chips.appendChild(chipEl(p.staff, p.leave, { dateStr, role })));
+        people.forEach((p) => chips.appendChild(chipEl(p.staff, p.leave, { dateStr, role, assignment: p.assignment })));
         chips.appendChild(addPersonChipEl(room, role, dateStr));
         row.appendChild(lbl);
         row.appendChild(chips);
@@ -557,7 +557,7 @@
       ROLE_ORDER.forEach((role) => {
         byRole[role].forEach((p) => {
           if (p.leave) {
-            absentees.push({ staff: p.staff, role, leave: p.leave });
+            absentees.push({ staff: p.staff, role, leave: p.leave, assignment: p.assignment });
             totals[p.leave.type] = (totals[p.leave.type] || 0) + 1;
           }
         });
@@ -602,7 +602,7 @@
       peopleCell.className = "sl-table-cell";
       peopleCell.style.flex = "2";
       absentees.forEach((a) => {
-        const chip = chipEl(a.staff, a.leave, { dateStr, role: a.role });
+        const chip = chipEl(a.staff, a.leave, { dateStr, role: a.role, assignment: a.assignment });
         peopleCell.appendChild(chip);
       });
       row.appendChild(roomCell);
@@ -686,6 +686,7 @@
   const assignList = document.getElementById("assign-list");
 
   assignRoomSelect.addEventListener("change", renderAssignList);
+  assignRoleSelect.addEventListener("change", fillStaffSelects);
 
   function renderAssignList() {
     assignList.innerHTML = "";
@@ -785,11 +786,23 @@
 
   let quickAssignCtx = null;
 
+  function staffCandidatesForRole(role) {
+    if (role === "vet" || role === "intern") return DATA.staff.filter((s) => personCategory(s) === "doctor");
+    return DATA.staff;
+  }
+
   function openQuickAssignModal(room, role, dateStr) {
     quickAssignCtx = { room, role };
     quickAssignTitle.textContent = "เพิ่ม" + ROLE_LABELS[role] + " · " + room.name;
     quickAssignStaffSelect.innerHTML = "";
-    DATA.staff.forEach((s) => {
+    const candidates = staffCandidatesForRole(role);
+    if (!candidates.length) {
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "ไม่มีบุคลากรตำแหน่งหมอในระบบ";
+      quickAssignStaffSelect.appendChild(opt);
+    }
+    candidates.forEach((s) => {
       const opt = document.createElement("option");
       opt.value = s.id;
       opt.textContent = s.name + " (" + deptName(s.departmentId) + ")";
@@ -892,15 +905,22 @@
   const editSaveBtn = document.getElementById("edit-save-btn");
   const editCancelBtn = document.getElementById("edit-cancel-btn");
   const editModalStatus = document.getElementById("edit-modal-status");
+  const editRemoveAssignmentBtn = document.getElementById("edit-remove-assignment-btn");
 
-  let editCtx = null; // { mode: "quick"|"full", staffId, existingLeaveId, dateStr }
+  let editCtx = null; // { mode: "quick"|"full", staffId, existingLeaveId, dateStr, assignmentId }
 
   editTypeSelect.addEventListener("change", () => {
     editCoveringDeptRow.hidden = editTypeSelect.value !== "covering";
   });
 
-  function openQuickEditModal(staffMember, dateStr, existingLeave) {
-    editCtx = { mode: "quick", staffId: staffMember.id, existingLeaveId: existingLeave ? existingLeave.id : null, dateStr };
+  function openQuickEditModal(staffMember, dateStr, existingLeave, assignment) {
+    editCtx = {
+      mode: "quick",
+      staffId: staffMember.id,
+      existingLeaveId: existingLeave ? existingLeave.id : null,
+      dateStr,
+      assignmentId: assignment ? assignment.id : null
+    };
     editModalTitle.textContent = staffMember.name + " · " + dateStr;
     editDateRangeRow.hidden = true;
     editTypeSelect.value = existingLeave ? existingLeave.type : "";
@@ -909,13 +929,15 @@
     editNoteInput.value = existingLeave ? existingLeave.note || "" : "";
     fillRememberedName(editUserInput);
     editModalStatus.textContent = "";
+    editRemoveAssignmentBtn.hidden = !assignment;
     editModal.hidden = false;
   }
 
   function openFullEditModal(leave) {
     const sm = byId(DATA.staff, leave.staffId);
-    editCtx = { mode: "full", staffId: leave.staffId, existingLeaveId: leave.id, dateStr: null };
+    editCtx = { mode: "full", staffId: leave.staffId, existingLeaveId: leave.id, dateStr: null, assignmentId: null };
     editModalTitle.textContent = (sm ? sm.name : "?") + " — แก้ไขการลา";
+    editRemoveAssignmentBtn.hidden = true;
     editDateRangeRow.hidden = false;
     editStartDate.value = leave.startDate;
     editEndDate.value = leave.endDate;
@@ -931,6 +953,23 @@
   function closeEditModal() { editModal.hidden = true; editCtx = null; }
   editCancelBtn.addEventListener("click", closeEditModal);
   editModal.addEventListener("click", (e) => { if (e.target === editModal) closeEditModal(); });
+
+  editRemoveAssignmentBtn.addEventListener("click", async () => {
+    if (!editCtx || !editCtx.assignmentId) return;
+    editRemoveAssignmentBtn.disabled = true;
+    editModalStatus.textContent = "กำลังลบ...";
+    try {
+      await callApi("deleteAssignment", { id: editCtx.assignmentId });
+      DATA.assignments = DATA.assignments.filter((a) => a.id !== editCtx.assignmentId);
+      closeEditModal();
+      renderRota();
+      updateRotaBadge();
+    } catch (err) {
+      editModalStatus.textContent = "ลบไม่สำเร็จ: " + err.message;
+    } finally {
+      editRemoveAssignmentBtn.disabled = false;
+    }
+  });
 
   editSaveBtn.addEventListener("click", async () => {
     if (!editCtx) return;
@@ -1274,7 +1313,14 @@
 
   function fillStaffSelects() {
     assignStaffSelect.innerHTML = "";
-    DATA.staff.forEach((s) => {
+    const candidates = staffCandidatesForRole(assignRoleSelect.value);
+    if (!candidates.length) {
+      const opt = document.createElement("option");
+      opt.value = "";
+      opt.textContent = "ไม่มีบุคลากรตำแหน่งหมอในระบบ";
+      assignStaffSelect.appendChild(opt);
+    }
+    candidates.forEach((s) => {
       const opt = document.createElement("option");
       opt.value = s.id;
       opt.textContent = s.name + " (" + deptName(s.departmentId) + ")";
