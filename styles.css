@@ -384,6 +384,17 @@ input:focus, select:focus {
   opacity: 0.85;
 }
 
+.sl-chip.sl-chip-add {
+  background: transparent;
+  border: 1px dashed var(--color-primary);
+  color: var(--color-primary);
+  font-family: inherit;
+}
+
+.sl-chip.sl-chip-add:hover {
+  background: var(--color-panel-alt);
+}
+
 .sl-legend {
   display: flex;
   flex-wrap: wrap;

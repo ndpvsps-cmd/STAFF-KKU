@@ -483,6 +483,16 @@
     });
   }
 
+  function addPersonChipEl(room, role, dateStr) {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "sl-chip sl-chip-add";
+    btn.textContent = "+ เพิ่ม";
+    btn.title = "เพิ่ม" + ROLE_LABELS[role] + "ประจำห้องนี้";
+    btn.addEventListener("click", () => openQuickAssignModal(room, role, dateStr));
+    return btn;
+  }
+
   function renderRotaSchedule() {
     const dateStr = rotaDateStr();
     rotaScheduleView.innerHTML = "";
@@ -490,18 +500,17 @@
     rotaDashboardView.hidden = true;
     rotaAssignView.hidden = true;
 
-    const entries = effectiveRoomsForDate(dateStr);
-    const withData = entries.filter((e) => ROLE_ORDER.some((r) => e.byRole[r].length));
-
-    if (!withData.length) {
+    if (!DATA.rooms.length) {
       const empty = document.createElement("div");
       empty.className = "sl-empty";
-      empty.textContent = DATA.rooms.length ? "ไม่มีตารางเวรสำหรับวันนี้" : "ยังไม่มีห้อง — เพิ่มห้องได้ที่แท็บ \"บุคลากร/แผนก\"";
+      empty.textContent = "ยังไม่มีห้อง — เพิ่มห้องได้ที่แท็บ \"บุคลากร/แผนก\"";
       rotaScheduleView.appendChild(empty);
       return;
     }
 
-    withData.forEach(({ room, byRole }) => {
+    const entries = effectiveRoomsForDate(dateStr);
+
+    entries.forEach(({ room, byRole }) => {
       const card = document.createElement("div");
       card.className = "sl-room-card";
       const head = document.createElement("div");
@@ -513,7 +522,6 @@
 
       ROLE_ORDER.forEach((role) => {
         const people = byRole[role];
-        if (!people.length) return;
         const row = document.createElement("div");
         row.className = "sl-role-row";
         const lbl = document.createElement("div");
@@ -522,6 +530,7 @@
         const chips = document.createElement("div");
         chips.className = "sl-chips";
         people.forEach((p) => chips.appendChild(chipEl(p.staff, p.leave, { dateStr, role })));
+        chips.appendChild(addPersonChipEl(room, role, dateStr));
         row.appendChild(lbl);
         row.appendChild(chips);
         card.appendChild(row);
@@ -760,6 +769,85 @@
       assignStatusMsg.classList.add("sl-status-error");
     } finally {
       assignSaveBtn.disabled = false;
+    }
+  });
+
+  // ---- quick-assign modal (add person to a room+role straight from the schedule view) ----
+  const quickAssignModal = document.getElementById("quick-assign-modal");
+  const quickAssignTitle = document.getElementById("quick-assign-title");
+  const quickAssignStaffSelect = document.getElementById("quick-assign-staff-select");
+  const quickAssignStartDate = document.getElementById("quick-assign-start-date");
+  const quickAssignEndDate = document.getElementById("quick-assign-end-date");
+  const quickAssignNote = document.getElementById("quick-assign-note");
+  const quickAssignSaveBtn = document.getElementById("quick-assign-save-btn");
+  const quickAssignCancelBtn = document.getElementById("quick-assign-cancel-btn");
+  const quickAssignStatus = document.getElementById("quick-assign-status");
+
+  let quickAssignCtx = null;
+
+  function openQuickAssignModal(room, role, dateStr) {
+    quickAssignCtx = { room, role };
+    quickAssignTitle.textContent = "เพิ่ม" + ROLE_LABELS[role] + " · " + room.name;
+    quickAssignStaffSelect.innerHTML = "";
+    DATA.staff.forEach((s) => {
+      const opt = document.createElement("option");
+      opt.value = s.id;
+      opt.textContent = s.name + " (" + deptName(s.departmentId) + ")";
+      quickAssignStaffSelect.appendChild(opt);
+    });
+    quickAssignStartDate.value = dateStr;
+    quickAssignEndDate.value = dateStr;
+    quickAssignNote.value = "";
+    quickAssignStatus.textContent = "";
+    quickAssignModal.hidden = false;
+  }
+
+  function closeQuickAssignModal() {
+    quickAssignModal.hidden = true;
+    quickAssignCtx = null;
+  }
+
+  quickAssignCancelBtn.addEventListener("click", closeQuickAssignModal);
+  quickAssignModal.addEventListener("click", (e) => {
+    if (e.target === quickAssignModal) closeQuickAssignModal();
+  });
+
+  quickAssignSaveBtn.addEventListener("click", async () => {
+    if (!quickAssignCtx) return;
+    quickAssignStatus.textContent = "";
+    if (!quickAssignStaffSelect.value) {
+      quickAssignStatus.textContent = "กรุณาเลือกบุคลากร";
+      return;
+    }
+    if (!quickAssignStartDate.value || !quickAssignEndDate.value) {
+      quickAssignStatus.textContent = "กรุณาเลือกช่วงวันที่";
+      return;
+    }
+    if (quickAssignEndDate.value < quickAssignStartDate.value) {
+      quickAssignStatus.textContent = "วันที่สิ้นสุดต้องไม่ก่อนวันที่เริ่มต้น";
+      return;
+    }
+    quickAssignSaveBtn.disabled = true;
+    quickAssignStatus.textContent = "กำลังบันทึก...";
+    try {
+      const payload = {
+        roomId: quickAssignCtx.room.id,
+        role: quickAssignCtx.role,
+        staffId: quickAssignStaffSelect.value,
+        startDate: quickAssignStartDate.value,
+        endDate: quickAssignEndDate.value,
+        note: quickAssignNote.value.trim(),
+        createdBy: "web"
+      };
+      const res = await callApi("addAssignment", payload);
+      DATA.assignments.push(Object.assign({ id: res.id }, payload));
+      closeQuickAssignModal();
+      renderRota();
+      updateRotaBadge();
+    } catch (err) {
+      quickAssignStatus.textContent = "บันทึกไม่สำเร็จ: " + err.message;
+    } finally {
+      quickAssignSaveBtn.disabled = false;
     }
   });
 

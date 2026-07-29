@@ -339,6 +339,35 @@
     </div>
   </div>
 
+  <div class="sl-modal-backdrop" id="quick-assign-modal" hidden>
+    <div class="sl-modal">
+      <div class="sl-modal-title" id="quick-assign-title"></div>
+      <div class="sl-field-row">
+        <label for="quick-assign-staff-select">บุคลากร</label>
+        <select id="quick-assign-staff-select"></select>
+      </div>
+      <div class="sl-form-grid">
+        <div class="sl-field-row">
+          <label for="quick-assign-start-date">ตั้งแต่วันที่</label>
+          <input type="date" id="quick-assign-start-date">
+        </div>
+        <div class="sl-field-row">
+          <label for="quick-assign-end-date">ถึงวันที่</label>
+          <input type="date" id="quick-assign-end-date">
+        </div>
+      </div>
+      <div class="sl-field-row">
+        <label for="quick-assign-note">หมายเหตุ (ไม่บังคับ)</label>
+        <input type="text" id="quick-assign-note">
+      </div>
+      <div class="sl-modal-actions">
+        <button type="button" class="sl-btn" id="quick-assign-cancel-btn">ยกเลิก</button>
+        <button type="button" class="sl-btn sl-btn-primary" id="quick-assign-save-btn">บันทึก</button>
+      </div>
+      <p class="sl-status-msg" id="quick-assign-status"></p>
+    </div>
+  </div>
+
   <script src="staff-leave-config.js"></script>
   <script src="staff-leave.js"></script>
 </body>
