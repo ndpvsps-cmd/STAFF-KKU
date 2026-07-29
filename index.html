@@ -89,6 +89,23 @@
         <button type="button" class="sl-tab" data-subview="assign">จัดตารางเวร</button>
       </div>
 
+      <div class="sl-panel" id="rota-schedule-controls">
+        <div class="sl-form-grid">
+          <div class="sl-field-row">
+            <label for="rota-room-filter">กรองห้อง</label>
+            <select id="rota-room-filter"><option value="">ทุกห้อง</option></select>
+          </div>
+          <div class="sl-field-row">
+            <label>มุมมอง</label>
+            <div class="sl-subview-tabs" id="rota-period-tabs">
+              <button type="button" class="sl-tab active" data-period="day">รายวัน</button>
+              <button type="button" class="sl-tab" data-period="week">รายสัปดาห์</button>
+              <button type="button" class="sl-tab" data-period="month">รายเดือน</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div id="rota-schedule-view" class="sl-room-grid"></div>
       <div id="rota-dashboard-view" hidden></div>
 
