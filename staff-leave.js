@@ -1074,6 +1074,25 @@
     }));
   }
 
+  const CALENDAR_WEEKDAY_COLS = ["จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์"];
+
+  function staffReportCalendarWeeks(year, month) {
+    const total = daysInMonth(year, month);
+    const weeks = [];
+    let currentWeek = null;
+    for (let d = 1; d <= total; d++) {
+      const dow = new Date(year, month - 1, d).getDay();
+      if (dow === 0 || dow === 6) continue;
+      const col = dow - 1;
+      if (!currentWeek || col === 0) {
+        currentWeek = [null, null, null, null, null];
+        weeks.push(currentWeek);
+      }
+      currentWeek[col] = { day: d, iso: year + "-" + pad2(month) + "-" + pad2(d) };
+    }
+    return weeks;
+  }
+
   function renderStaffReportTable() {
     staffreportTable.innerHTML = "";
     if (!staffReportStaffId) {
@@ -1081,20 +1100,39 @@
       return;
     }
     staffreportStatus.textContent = "";
-    const rows = staffReportRows();
-    const head = document.createElement("div");
-    head.className = "sl-table-row sl-table-head";
-    head.innerHTML = '<span class="sl-table-cell">วันที่</span><span class="sl-table-cell">วัน</span><span class="sl-table-cell">ห้อง</span>';
-    staffreportTable.appendChild(head);
-    rows.forEach((row) => {
-      const rowEl = document.createElement("div");
-      rowEl.className = "sl-table-row";
-      rowEl.innerHTML =
-        '<span class="sl-table-cell">' + formatThaiDate(row.dateStr) + '</span>' +
-        '<span class="sl-table-cell">' + row.wd + '</span>' +
-        '<span class="sl-table-cell">' + (row.rooms.length ? escapeHtml(row.rooms.join(", ")) : "-") + '</span>';
-      staffreportTable.appendChild(rowEl);
+    const [y, m] = staffreportMonthSelect.value.split("-").map(Number);
+    const weeks = staffReportCalendarWeeks(y, m);
+
+    const scroll = document.createElement("div");
+    scroll.className = "sl-period-scroll";
+    const grid = document.createElement("div");
+    grid.className = "sl-calendar-grid";
+
+    CALENDAR_WEEKDAY_COLS.forEach((label) => {
+      const cell = document.createElement("div");
+      cell.className = "sl-calendar-header-cell";
+      cell.textContent = label;
+      grid.appendChild(cell);
     });
+
+    weeks.forEach((week) => {
+      week.forEach((dayInfo) => {
+        const cell = document.createElement("div");
+        cell.className = "sl-calendar-cell";
+        if (dayInfo) {
+          const rooms = staffRoomsOnDate(staffReportStaffId, dayInfo.iso);
+          cell.innerHTML =
+            '<span class="sl-calendar-daynum">' + dayInfo.day + '</span>' +
+            (rooms.length
+              ? '<span class="sl-calendar-room">' + escapeHtml(rooms.join(", ")) + '</span>'
+              : '<span class="sl-calendar-room sl-calendar-empty">-</span>');
+        }
+        grid.appendChild(cell);
+      });
+    });
+
+    scroll.appendChild(grid);
+    staffreportTable.appendChild(scroll);
   }
 
   staffreportRunBtn.addEventListener("click", renderStaffReportTable);
