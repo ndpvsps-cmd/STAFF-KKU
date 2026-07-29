@@ -87,6 +87,7 @@
         <button type="button" class="sl-tab active" data-subview="schedule">ตารางห้อง</button>
         <button type="button" class="sl-tab" data-subview="dashboard">แดชบอร์ดผู้ขาด/ลา</button>
         <button type="button" class="sl-tab" data-subview="assign">จัดตารางเวร</button>
+        <button type="button" class="sl-tab" data-subview="staffreport">รายงานตามคน</button>
       </div>
 
       <div class="sl-panel" id="rota-schedule-controls">
@@ -148,6 +149,32 @@
 
         <div class="sl-panel-title">ตารางเวรที่มีอยู่ (ห้องที่เลือกด้านบน)</div>
         <div class="sl-table" id="assign-list"></div>
+      </div>
+
+      <div class="sl-panel" id="rota-staffreport-view" hidden>
+        <div class="sl-panel-title">รายงานตารางเวรรายเดือนของบุคลากร</div>
+        <p class="sl-note">แสดงเฉพาะวันจันทร์-ศุกร์ (ตารางเวรนี้ไม่มีวันเสาร์-อาทิตย์)</p>
+        <div class="sl-field-row">
+          <label for="staffreport-search">ค้นหาบุคลากร</label>
+          <input type="text" id="staffreport-search" placeholder="พิมพ์ชื่อบุคลากร..." autocomplete="off">
+          <div class="sl-search-results" id="staffreport-search-results"></div>
+          <p class="sl-status-msg" id="staffreport-selected"></p>
+        </div>
+        <div class="sl-form-grid">
+          <div class="sl-field-row">
+            <label for="staffreport-month-select">เดือน</label>
+            <select id="staffreport-month-select"></select>
+          </div>
+          <div class="sl-field-row">
+            <label>&nbsp;</label>
+            <button type="button" class="sl-btn" id="staffreport-run-btn">แสดงรายงาน</button>
+          </div>
+        </div>
+        <div class="sl-form-actions">
+          <button type="button" class="sl-btn sl-btn-primary" id="staffreport-export-btn">ดาวน์โหลด CSV</button>
+        </div>
+        <p class="sl-status-msg" id="staffreport-status"></p>
+        <div class="sl-table" id="staffreport-table"></div>
       </div>
 
     </section>

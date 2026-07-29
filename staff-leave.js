@@ -331,6 +331,7 @@
   const rotaScheduleView = document.getElementById("rota-schedule-view");
   const rotaDashboardView = document.getElementById("rota-dashboard-view");
   const rotaAssignView = document.getElementById("rota-assign-view");
+  const rotaStaffReportView = document.getElementById("rota-staffreport-view");
   const rotaSubviewTabs = document.querySelector("#view-rota .sl-subview-tabs");
   const rotaScheduleControls = document.getElementById("rota-schedule-controls");
   const rotaRoomFilter = document.getElementById("rota-room-filter");
@@ -518,6 +519,7 @@
     rotaScheduleView.hidden = false;
     rotaDashboardView.hidden = true;
     rotaAssignView.hidden = true;
+    rotaStaffReportView.hidden = true;
 
     if (!DATA.rooms.length) {
       rotaScheduleView.className = "sl-room-grid";
@@ -667,6 +669,7 @@
     rotaScheduleView.hidden = true;
     rotaDashboardView.hidden = false;
     rotaAssignView.hidden = true;
+    rotaStaffReportView.hidden = true;
     rotaDashboardView.innerHTML = "";
 
     const entries = effectiveRoomsForDate(dateStr);
@@ -738,7 +741,16 @@
     rotaScheduleView.hidden = true;
     rotaDashboardView.hidden = true;
     rotaAssignView.hidden = false;
+    rotaStaffReportView.hidden = true;
     renderAssignList();
+  }
+
+  function showRotaStaffReport() {
+    rotaScheduleView.hidden = true;
+    rotaDashboardView.hidden = true;
+    rotaAssignView.hidden = true;
+    rotaStaffReportView.hidden = false;
+    renderStaffReportMonthSelect();
   }
 
   function renderRota() {
@@ -751,7 +763,8 @@
 
     if (rotaState.subview === "schedule") renderRotaSchedule();
     else if (rotaState.subview === "dashboard") renderRotaDashboard();
-    else renderRotaAssign();
+    else if (rotaState.subview === "assign") renderRotaAssign();
+    else showRotaStaffReport();
   }
 
   let rotaSearchDebounce = null;
@@ -984,6 +997,131 @@
     } finally {
       quickAssignSaveBtn.disabled = false;
     }
+  });
+
+  // ---- staff monthly room report (search a person, list their rooms per weekday) ----
+  const staffreportSearch = document.getElementById("staffreport-search");
+  const staffreportSearchResults = document.getElementById("staffreport-search-results");
+  const staffreportSelected = document.getElementById("staffreport-selected");
+  const staffreportMonthSelect = document.getElementById("staffreport-month-select");
+  const staffreportRunBtn = document.getElementById("staffreport-run-btn");
+  const staffreportExportBtn = document.getElementById("staffreport-export-btn");
+  const staffreportStatus = document.getElementById("staffreport-status");
+  const staffreportTable = document.getElementById("staffreport-table");
+
+  let staffReportStaffId = null;
+
+  function renderStaffReportMonthSelect() {
+    const prevValue = staffreportMonthSelect.value;
+    staffreportMonthSelect.innerHTML = "";
+    monthWindow(rotaState.year, rotaState.month).forEach((m) => {
+      const opt = document.createElement("option");
+      opt.value = m.year + "-" + m.month;
+      opt.textContent = m.label;
+      staffreportMonthSelect.appendChild(opt);
+    });
+    staffreportMonthSelect.value = prevValue || (rotaState.year + "-" + rotaState.month);
+  }
+
+  let staffreportSearchDebounce = null;
+  staffreportSearch.addEventListener("input", () => {
+    clearTimeout(staffreportSearchDebounce);
+    staffreportSearchDebounce = setTimeout(runStaffReportSearch, 150);
+  });
+
+  function runStaffReportSearch() {
+    const q = staffreportSearch.value.trim();
+    staffreportSearchResults.innerHTML = "";
+    if (!q) return;
+    const matches = DATA.staff.filter((s) => s.name.indexOf(q) !== -1).slice(0, 20);
+    matches.forEach((sm) => {
+      const hit = document.createElement("div");
+      hit.className = "sl-search-hit";
+      hit.textContent = sm.name + " · " + deptName(sm.departmentId);
+      hit.addEventListener("click", () => {
+        staffReportStaffId = sm.id;
+        staffreportSelected.textContent = "เลือก: " + sm.name + " (" + deptName(sm.departmentId) + ")";
+        staffreportSearch.value = "";
+        staffreportSearchResults.innerHTML = "";
+      });
+      staffreportSearchResults.appendChild(hit);
+    });
+  }
+
+  function weekdaysInMonth(year, month) {
+    const total = daysInMonth(year, month);
+    const days = [];
+    for (let d = 1; d <= total; d++) {
+      const dow = new Date(year, month - 1, d).getDay();
+      if (dow >= 1 && dow <= 5) days.push({ iso: year + "-" + pad2(month) + "-" + pad2(d), wd: weekdayOf(year, month, d) });
+    }
+    return days;
+  }
+
+  function staffRoomsOnDate(staffId, dateStr) {
+    return DATA.assignments
+      .filter((a) => String(a.staffId) === String(staffId) && a.startDate <= dateStr && a.endDate >= dateStr)
+      .map((a) => { const r = byId(DATA.rooms, a.roomId); return (r ? r.name : "?") + " (" + ROLE_LABELS[a.role] + ")"; });
+  }
+
+  function staffReportRows() {
+    if (!staffReportStaffId || !staffreportMonthSelect.value) return null;
+    const [y, m] = staffreportMonthSelect.value.split("-").map(Number);
+    return weekdaysInMonth(y, m).map((dt) => ({
+      dateStr: dt.iso,
+      wd: dt.wd,
+      rooms: staffRoomsOnDate(staffReportStaffId, dt.iso)
+    }));
+  }
+
+  function renderStaffReportTable() {
+    staffreportTable.innerHTML = "";
+    if (!staffReportStaffId) {
+      staffreportStatus.textContent = "กรุณาเลือกบุคลากรก่อน";
+      return;
+    }
+    staffreportStatus.textContent = "";
+    const rows = staffReportRows();
+    const head = document.createElement("div");
+    head.className = "sl-table-row sl-table-head";
+    head.innerHTML = '<span class="sl-table-cell">วันที่</span><span class="sl-table-cell">วัน</span><span class="sl-table-cell">ห้อง</span>';
+    staffreportTable.appendChild(head);
+    rows.forEach((row) => {
+      const rowEl = document.createElement("div");
+      rowEl.className = "sl-table-row";
+      rowEl.innerHTML =
+        '<span class="sl-table-cell">' + formatThaiDate(row.dateStr) + '</span>' +
+        '<span class="sl-table-cell">' + row.wd + '</span>' +
+        '<span class="sl-table-cell">' + (row.rooms.length ? escapeHtml(row.rooms.join(", ")) : "-") + '</span>';
+      staffreportTable.appendChild(rowEl);
+    });
+  }
+
+  staffreportRunBtn.addEventListener("click", renderStaffReportTable);
+
+  staffreportExportBtn.addEventListener("click", () => {
+    const rows = staffReportRows();
+    if (!staffReportStaffId || !rows) {
+      staffreportStatus.textContent = "กรุณาเลือกบุคลากรก่อน";
+      return;
+    }
+    const sm = byId(DATA.staff, staffReportStaffId);
+    const header = ["วันที่", "วัน", "ห้อง"];
+    const lines = [header.map(csvEscape).join(",")];
+    rows.forEach((row) => {
+      lines.push([row.dateStr, row.wd, row.rooms.join(" / ") || ""].map(csvEscape).join(","));
+    });
+    const csvContent = "﻿" + lines.join("\r\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "room-report_" + (sm ? sm.name : "staff") + "_" + staffreportMonthSelect.value + ".csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    staffreportStatus.textContent = "ดาวน์โหลดแล้ว (" + rows.length + " วัน)";
   });
 
   // ---- absence badge (in-app notification) ----
