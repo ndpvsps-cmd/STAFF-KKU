@@ -344,6 +344,44 @@
     return String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   }
 
+  // ---- date fields: overlay a วัน-เดือน-ปี display on top of native <input type="date"> ----
+  function formatDMY(iso) {
+    if (!iso) return "";
+    const parts = iso.split("-");
+    if (parts.length !== 3) return "";
+    return parts[2] + "-" + parts[1] + "-" + parts[0];
+  }
+
+  function initDateOverlays() {
+    const pairs = Array.from(document.querySelectorAll('input[type="date"]')).map((input) => {
+      const wrapper = document.createElement("span");
+      wrapper.className = "sl-date-field";
+      input.parentNode.insertBefore(wrapper, input);
+      wrapper.appendChild(input);
+      const overlay = document.createElement("span");
+      overlay.className = "sl-date-overlay";
+      wrapper.appendChild(overlay);
+      return { input, overlay, last: undefined };
+    });
+
+    function sync() {
+      pairs.forEach((p) => {
+        if (p.input.value === p.last) return;
+        p.last = p.input.value;
+        if (p.input.value) {
+          p.overlay.textContent = formatDMY(p.input.value);
+          p.overlay.classList.remove("sl-date-overlay-empty");
+        } else {
+          p.overlay.textContent = "วว-ดด-ปปปป";
+          p.overlay.classList.add("sl-date-overlay-empty");
+        }
+      });
+    }
+
+    sync();
+    setInterval(sync, 300);
+  }
+
   // ================= ROTA (room schedule) =================
   const rotaMonthSelect = document.getElementById("rota-month-select");
   const rotaDayStrip = document.getElementById("rota-day-strip");
@@ -1907,6 +1945,8 @@
     URL.revokeObjectURL(url);
     reportStatusMsg.textContent = "✅ ดาวน์โหลดแล้ว (" + rows.length + " รายการ)";
   });
+
+  initDateOverlays();
 
   // ================= INIT =================
   if (EDIT_ENABLED && !accessKey) {
