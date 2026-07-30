@@ -3,15 +3,15 @@
 
   const EDIT_ENABLED = typeof APPS_SCRIPT_URL !== "undefined" && !!APPS_SCRIPT_URL;
 
-  const ROLE_LABELS = { vet: "สัตวแพทย์", intern: "หมอ Intern", assistant: "ผู้ช่วยประจำห้อง" };
+  const ROLE_LABELS = { vet: "👨‍⚕️ สัตวแพทย์", intern: "🩺 หมอ Intern", assistant: "🙋 ผู้ช่วยประจำห้อง" };
   const ROLE_ORDER = ["vet", "intern", "assistant"];
   const LEAVE_TYPES = {
-    sick: "ลาป่วย",
-    personal: "ลากิจ",
-    vacation: "ลาพักร้อน",
-    nightshift: "ออกเวรไนท์",
-    seminar: "ลาสัมมนา/ราชการ",
-    covering: "ทำงานแทนหน่วยอื่น"
+    sick: "🤒 ลาป่วย",
+    personal: "🏠 ลากิจ",
+    vacation: "🏖️ ลาพักร้อน",
+    nightshift: "🌙 ออกเวรไนท์",
+    seminar: "📚 ลาสัมมนา/ราชการ",
+    covering: "🔄 ทำงานแทนหน่วยอื่น"
   };
   const LEAVE_COLORS = {
     sick: "#FF00FF",
@@ -121,7 +121,7 @@
   // ---- API ----
   async function loadData() {
     if (!EDIT_ENABLED) {
-      showConnBanner("ยังไม่ได้เชื่อมต่อฐานข้อมูล — ตั้งค่า APPS_SCRIPT_URL ใน staff-leave-config.js (ดูวิธีทำใน apps-script/staff-leave.gs) ตอนนี้แอปทำงานแบบไม่มีข้อมูล");
+      showConnBanner("⚠️ ยังไม่ได้เชื่อมต่อฐานข้อมูล — ตั้งค่า APPS_SCRIPT_URL ใน staff-leave-config.js (ดูวิธีทำใน apps-script/staff-leave.gs) ตอนนี้แอปทำงานแบบไม่มีข้อมูล");
       return;
     }
     try {
@@ -140,10 +140,10 @@
         localStorage.removeItem("slAccessKey");
         showAccessGate(json.error || "รหัสผ่านไม่ถูกต้อง");
       } else {
-        showConnBanner("โหลดข้อมูลไม่สำเร็จ: " + ((json && json.error) || "unknown error"));
+        showConnBanner("❌ โหลดข้อมูลไม่สำเร็จ: " + ((json && json.error) || "unknown error"));
       }
     } catch (err) {
-      showConnBanner("เชื่อมต่อฐานข้อมูลไม่ได้: " + err.message);
+      showConnBanner("❌ เชื่อมต่อฐานข้อมูลไม่ได้: " + err.message);
     }
   }
 
@@ -278,7 +278,7 @@
     if (!depts.length) {
       const empty = document.createElement("div");
       empty.className = "sl-empty";
-      empty.textContent = "ยังไม่มีแผนก — เพิ่มแผนกได้ที่แท็บ \"บุคลากร/แผนก\"";
+      empty.textContent = "📭 ยังไม่มีแผนก — เพิ่มแผนกได้ที่แท็บ \"บุคลากร/แผนก\"";
       overviewSummary.appendChild(empty);
     }
   }
@@ -290,7 +290,7 @@
     if (!rows.length && !incoming.length) {
       const empty = document.createElement("div");
       empty.className = "sl-empty";
-      empty.textContent = "ไม่มีใครลาในวันนี้";
+      empty.textContent = "✅ ไม่มีใครลาในวันนี้";
       overviewDetailList.appendChild(empty);
       return;
     }
@@ -506,7 +506,7 @@
     btn.type = "button";
     btn.className = "sl-chip sl-chip-add";
     btn.textContent = "+ เพิ่ม";
-    btn.title = "เพิ่ม" + ROLE_LABELS[role] + "ประจำห้องนี้";
+    btn.title = "เพิ่ม " + ROLE_LABELS[role] + " ประจำห้องนี้";
     btn.addEventListener("click", () => openQuickAssignModal(room, role, dateStr));
     return btn;
   }
@@ -523,7 +523,7 @@
 
     if (!DATA.rooms.length) {
       rotaScheduleView.className = "sl-room-grid";
-      rotaScheduleView.innerHTML = '<div class="sl-empty">ยังไม่มีห้อง — เพิ่มห้องได้ที่แท็บ "บุคลากร/แผนก"</div>';
+      rotaScheduleView.innerHTML = '<div class="sl-empty">📭 ยังไม่มีห้อง — เพิ่มห้องได้ที่แท็บ "บุคลากร/แผนก"</div>';
       return;
     }
 
@@ -545,7 +545,7 @@
 
     const rooms = filteredRooms();
     if (!rooms.length) {
-      rotaScheduleView.innerHTML = '<div class="sl-empty">ไม่พบห้องที่เลือก</div>';
+      rotaScheduleView.innerHTML = '<div class="sl-empty">🔍 ไม่พบห้องที่เลือก</div>';
       return;
     }
 
@@ -607,7 +607,7 @@
     rotaScheduleView.innerHTML = "";
     const rooms = filteredRooms();
     if (!rooms.length) {
-      rotaScheduleView.innerHTML = '<div class="sl-empty">ไม่พบห้องที่เลือก</div>';
+      rotaScheduleView.innerHTML = '<div class="sl-empty">🔍 ไม่พบห้องที่เลือก</div>';
       return;
     }
 
@@ -709,7 +709,7 @@
     if (!roomRows.length) {
       const empty = document.createElement("div");
       empty.className = "sl-empty";
-      empty.textContent = "ไม่มีใครขาด/ลาในวันนี้ (เท่าที่มีตารางเวร)";
+      empty.textContent = "✅ ไม่มีใครขาด/ลาในวันนี้ (เท่าที่มีตารางเวร)";
       rotaDashboardView.appendChild(empty);
       return;
     }
@@ -781,7 +781,7 @@
     if (!matches.length) {
       const empty = document.createElement("div");
       empty.className = "sl-search-empty sl-note";
-      empty.textContent = "ไม่พบชื่อที่ตรงกัน";
+      empty.textContent = "🔍 ไม่พบชื่อที่ตรงกัน";
       rotaSearchResults.appendChild(empty);
       return;
     }
@@ -831,7 +831,7 @@
     if (!rows.length) {
       const empty = document.createElement("div");
       empty.className = "sl-empty";
-      empty.textContent = "ยังไม่มีตารางเวรสำหรับห้องนี้";
+      empty.textContent = "📭 ยังไม่มีตารางเวรสำหรับห้องนี้";
       assignList.appendChild(empty);
       return;
     }
@@ -895,13 +895,13 @@
       };
       const res = await callApi("addAssignment", payload);
       DATA.assignments.push(Object.assign({ id: res.id }, payload));
-      assignStatusMsg.textContent = "บันทึกแล้ว";
+      assignStatusMsg.textContent = "✅ บันทึกแล้ว";
       assignNote.value = "";
       renderAssignList();
       renderRota();
       updateRotaBadge();
     } catch (err) {
-      assignStatusMsg.textContent = "บันทึกไม่สำเร็จ: " + err.message;
+      assignStatusMsg.textContent = "❌ บันทึกไม่สำเร็จ: " + err.message;
       assignStatusMsg.classList.add("sl-status-error");
     } finally {
       assignSaveBtn.disabled = false;
@@ -928,13 +928,13 @@
 
   function openQuickAssignModal(room, role, dateStr) {
     quickAssignCtx = { room, role };
-    quickAssignTitle.textContent = "เพิ่ม" + ROLE_LABELS[role] + " · " + room.name;
+    quickAssignTitle.textContent = "เพิ่ม " + ROLE_LABELS[role] + " · " + room.name;
     quickAssignStaffSelect.innerHTML = "";
     const candidates = staffCandidatesForRole(role);
     if (!candidates.length) {
       const opt = document.createElement("option");
       opt.value = "";
-      opt.textContent = "ไม่มีบุคลากรตำแหน่งหมอในระบบ";
+      opt.textContent = "🔍 ไม่มีบุคลากรตำแหน่งหมอในระบบ";
       quickAssignStaffSelect.appendChild(opt);
     }
     candidates.forEach((s) => {
@@ -993,7 +993,7 @@
       renderRota();
       updateRotaBadge();
     } catch (err) {
-      quickAssignStatus.textContent = "บันทึกไม่สำเร็จ: " + err.message;
+      quickAssignStatus.textContent = "❌ บันทึกไม่สำเร็จ: " + err.message;
     } finally {
       quickAssignSaveBtn.disabled = false;
     }
@@ -1040,7 +1040,7 @@
       hit.textContent = sm.name + " · " + deptName(sm.departmentId);
       hit.addEventListener("click", () => {
         staffReportStaffId = sm.id;
-        staffreportSelected.textContent = "เลือก: " + sm.name + " (" + deptName(sm.departmentId) + ")";
+        staffreportSelected.textContent = "✅ เลือก: " + sm.name + " (" + deptName(sm.departmentId) + ")";
         staffreportSearch.value = "";
         staffreportSearchResults.innerHTML = "";
       });
@@ -1159,7 +1159,7 @@
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    staffreportStatus.textContent = "ดาวน์โหลดแล้ว (" + rows.length + " วัน)";
+    staffreportStatus.textContent = "✅ ดาวน์โหลดแล้ว (" + rows.length + " วัน)";
   });
 
   // ---- absence badge (in-app notification) ----
@@ -1312,7 +1312,7 @@
       renderLeaveLog();
       updateRotaBadge();
     } catch (err) {
-      editModalStatus.textContent = "บันทึกไม่สำเร็จ: " + err.message;
+      editModalStatus.textContent = "❌ บันทึกไม่สำเร็จ: " + err.message;
     } finally {
       editSaveBtn.disabled = false;
     }
@@ -1359,7 +1359,7 @@
       hit.textContent = sm.name + " · " + deptName(sm.departmentId);
       hit.addEventListener("click", () => {
         selectedLeaveStaffId = sm.id;
-        leaveStaffSelected.textContent = "เลือก: " + sm.name + " (" + deptName(sm.departmentId) + ")";
+        leaveStaffSelected.textContent = "✅ เลือก: " + sm.name + " (" + deptName(sm.departmentId) + ")";
         leaveStaffSearch.value = "";
         leaveStaffResults.innerHTML = "";
       });
@@ -1398,7 +1398,7 @@
       };
       const res = await callApi("addLeave", payload);
       DATA.leaves.push(Object.assign({ id: res.id }, payload));
-      leaveFormStatus.textContent = "บันทึกแล้ว";
+      leaveFormStatus.textContent = "✅ บันทึกแล้ว";
       leaveNote.value = "";
       selectedLeaveStaffId = null;
       leaveStaffSelected.textContent = "";
@@ -1407,7 +1407,7 @@
       renderRota();
       updateRotaBadge();
     } catch (err) {
-      leaveFormStatus.textContent = "บันทึกไม่สำเร็จ: " + err.message;
+      leaveFormStatus.textContent = "❌ บันทึกไม่สำเร็จ: " + err.message;
       leaveFormStatus.classList.add("sl-status-error");
     } finally {
       leaveSaveBtn.disabled = false;
@@ -1420,7 +1420,7 @@
     if (!rows.length) {
       const empty = document.createElement("div");
       empty.className = "sl-empty";
-      empty.textContent = "ยังไม่มีบันทึกการลา";
+      empty.textContent = "📭 ยังไม่มีบันทึกการลา";
       leaveLogTable.appendChild(empty);
       return;
     }
@@ -1494,12 +1494,12 @@
       const res = await callApi("addDepartment", payload);
       DATA.departments.push(Object.assign({ id: res.id }, payload));
       deptNameInput.value = "";
-      deptStatusMsg.textContent = "เพิ่มแล้ว";
+      deptStatusMsg.textContent = "✅ เพิ่มแล้ว";
       refreshSharedSelects();
       renderAdmin();
       renderOverview();
     } catch (err) {
-      deptStatusMsg.textContent = "ไม่สำเร็จ: " + err.message;
+      deptStatusMsg.textContent = "❌ ไม่สำเร็จ: " + err.message;
     } finally {
       deptAddBtn.disabled = false;
     }
@@ -1516,12 +1516,12 @@
       DATA.rooms.push(Object.assign({ id: res.id }, payload));
       roomNameInput.value = "";
       roomPhoneInput.value = "";
-      roomStatusMsg.textContent = "เพิ่มแล้ว";
+      roomStatusMsg.textContent = "✅ เพิ่มแล้ว";
       refreshSharedSelects();
       renderAdmin();
       renderRota();
     } catch (err) {
-      roomStatusMsg.textContent = "ไม่สำเร็จ: " + err.message;
+      roomStatusMsg.textContent = "❌ ไม่สำเร็จ: " + err.message;
     } finally {
       roomAddBtn.disabled = false;
     }
@@ -1538,11 +1538,11 @@
       DATA.staff.push(Object.assign({ id: res.id }, payload));
       staffNameInput.value = "";
       staffPositionInput.value = "";
-      staffStatusMsg.textContent = "เพิ่มแล้ว";
+      staffStatusMsg.textContent = "✅ เพิ่มแล้ว";
       refreshSharedSelects();
       renderAdmin();
     } catch (err) {
-      staffStatusMsg.textContent = "ไม่สำเร็จ: " + err.message;
+      staffStatusMsg.textContent = "❌ ไม่สำเร็จ: " + err.message;
     } finally {
       staffAddBtn.disabled = false;
     }
@@ -1551,7 +1551,7 @@
   function renderAdmin() {
     deptTable.innerHTML = "";
     if (!DATA.departments.length) {
-      deptTable.innerHTML = '<div class="sl-empty">ยังไม่มีแผนก</div>';
+      deptTable.innerHTML = '<div class="sl-empty">📭 ยังไม่มีแผนก</div>';
     } else {
       DATA.departments.forEach((d) => {
         const row = document.createElement("div");
@@ -1563,7 +1563,7 @@
 
     roomTable.innerHTML = "";
     if (!DATA.rooms.length) {
-      roomTable.innerHTML = '<div class="sl-empty">ยังไม่มีห้อง</div>';
+      roomTable.innerHTML = '<div class="sl-empty">📭 ยังไม่มีห้อง</div>';
     } else {
       DATA.rooms.forEach((r) => {
         const row = document.createElement("div");
@@ -1578,7 +1578,7 @@
 
     staffTable.innerHTML = "";
     if (!DATA.staff.length) {
-      staffTable.innerHTML = '<div class="sl-empty">ยังไม่มีบุคลากร</div>';
+      staffTable.innerHTML = '<div class="sl-empty">📭 ยังไม่มีบุคลากร</div>';
     } else {
       DATA.staff.forEach((s) => {
         const row = document.createElement("div");
@@ -1615,7 +1615,7 @@
     if (!candidates.length) {
       const opt = document.createElement("option");
       opt.value = "";
-      opt.textContent = "ไม่มีบุคลากรตำแหน่งหมอในระบบ";
+      opt.textContent = "🔍 ไม่มีบุคลากรตำแหน่งหมอในระบบ";
       assignStaffSelect.appendChild(opt);
     }
     candidates.forEach((s) => {
@@ -1677,7 +1677,7 @@
     const rows = reportRows();
     reportTable.innerHTML = "";
     if (!rows.length) {
-      reportTable.innerHTML = '<div class="sl-empty">ไม่มีข้อมูลในช่วงที่เลือก</div>';
+      reportTable.innerHTML = '<div class="sl-empty">📭 ไม่มีข้อมูลในช่วงที่เลือก</div>';
       return;
     }
     const head = document.createElement("div");
@@ -1739,7 +1739,7 @@
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    reportStatusMsg.textContent = "ดาวน์โหลดแล้ว (" + rows.length + " รายการ)";
+    reportStatusMsg.textContent = "✅ ดาวน์โหลดแล้ว (" + rows.length + " รายการ)";
   });
 
   // ================= INIT =================

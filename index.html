@@ -13,32 +13,32 @@
 
   <div class="sl-modal-backdrop" id="access-gate" hidden>
     <div class="sl-modal">
-      <div class="sl-modal-title">ใส่รหัสผ่านเพื่อเข้าใช้งาน</div>
+      <div class="sl-modal-title">🔒 ใส่รหัสผ่านเพื่อเข้าใช้งาน</div>
       <p class="sl-note">ระบบนี้มีข้อมูลการลาของบุคลากร กรุณาใส่รหัสผ่านที่ได้รับจากทางแผนก (ใส่ครั้งเดียว เครื่องนี้จะจำไว้)</p>
       <div class="sl-field-row">
         <label for="access-gate-input">รหัสผ่าน</label>
         <input type="password" id="access-gate-input" autocomplete="off">
       </div>
       <div class="sl-modal-actions">
-        <button type="button" class="sl-btn sl-btn-primary" id="access-gate-submit">เข้าใช้งาน</button>
+        <button type="button" class="sl-btn sl-btn-primary" id="access-gate-submit">🔓 เข้าใช้งาน</button>
       </div>
       <p class="sl-status-msg" id="access-gate-status"></p>
     </div>
   </div>
 
   <header class="sl-header">
-    <h1>STAFF-KKU</h1>
-    <p class="subtitle">ระบบบันทึกการลา &amp; ตารางเวรบุคลากร</p>
+    <h1>🏥 STAFF-KKU</h1>
+    <p class="subtitle">📋 ระบบบันทึกการลา &amp; ตารางเวรบุคลากร</p>
   </header>
 
   <main class="sl-main">
 
     <nav class="sl-tabs" id="sl-tabs">
-      <button type="button" class="sl-tab active" data-view="overview">ภาพรวมรายวัน</button>
-      <button type="button" class="sl-tab" data-view="rota">ตารางประจำห้อง<span class="sl-badge" id="rota-badge" hidden></span></button>
-      <button type="button" class="sl-tab" data-view="leaves">บันทึกการลา</button>
-      <button type="button" class="sl-tab" data-view="admin">บุคลากร/แผนก</button>
-      <button type="button" class="sl-tab" data-view="report">รายงาน CSV</button>
+      <button type="button" class="sl-tab active" data-view="overview">📅 ภาพรวมรายวัน</button>
+      <button type="button" class="sl-tab" data-view="rota">🚪 ตารางประจำห้อง<span class="sl-badge" id="rota-badge" hidden></span></button>
+      <button type="button" class="sl-tab" data-view="leaves">📝 บันทึกการลา</button>
+      <button type="button" class="sl-tab" data-view="admin">👥 บุคลากร/แผนก</button>
+      <button type="button" class="sl-tab" data-view="report">📊 รายงาน CSV</button>
     </nav>
 
     <p class="sl-inline-banner" id="conn-banner" hidden></p>
@@ -48,7 +48,7 @@
       <div class="sl-panel">
         <div class="sl-day-picker">
           <input type="date" id="overview-date">
-          <button type="button" class="sl-today-btn" id="overview-today-btn">วันนี้</button>
+          <button type="button" class="sl-today-btn" id="overview-today-btn">📍 วันนี้</button>
         </div>
       </div>
 
@@ -66,7 +66,7 @@
       <div class="sl-panel">
         <div class="sl-month-row">
           <select id="rota-month-select" aria-label="เลือกเดือน"></select>
-          <button type="button" class="sl-today-btn" id="rota-today-btn">วันนี้</button>
+          <button type="button" class="sl-today-btn" id="rota-today-btn">📍 วันนี้</button>
         </div>
         <div class="sl-day-nav">
           <button type="button" class="sl-arrow" id="rota-prev-day-btn" aria-label="วันก่อนหน้า">‹</button>
@@ -74,7 +74,7 @@
           <button type="button" class="sl-arrow" id="rota-next-day-btn" aria-label="วันถัดไป">›</button>
         </div>
         <div class="sl-search-row">
-          <input type="text" id="rota-search-input" placeholder="ค้นหาชื่อบุคลากร..." autocomplete="off">
+          <input type="text" id="rota-search-input" placeholder="🔍 ค้นหาชื่อบุคลากร..." autocomplete="off">
           <div class="sl-search-results" id="rota-search-results"></div>
         </div>
       </div>
@@ -84,20 +84,20 @@
       <div class="sl-date-heading" id="rota-date-heading"></div>
 
       <div class="sl-subview-tabs">
-        <button type="button" class="sl-tab active" data-subview="schedule">ตารางห้อง</button>
-        <button type="button" class="sl-tab" data-subview="dashboard">แดชบอร์ดผู้ขาด/ลา</button>
-        <button type="button" class="sl-tab" data-subview="assign">จัดตารางเวร</button>
-        <button type="button" class="sl-tab" data-subview="staffreport">รายงานตามคน</button>
+        <button type="button" class="sl-tab active" data-subview="schedule">🗂️ ตารางห้อง</button>
+        <button type="button" class="sl-tab" data-subview="dashboard">⚠️ แดชบอร์ดผู้ขาด/ลา</button>
+        <button type="button" class="sl-tab" data-subview="assign">➕ จัดตารางเวร</button>
+        <button type="button" class="sl-tab" data-subview="staffreport">🔍 รายงานตามคน</button>
       </div>
 
       <div class="sl-panel" id="rota-schedule-controls">
         <div class="sl-form-grid">
           <div class="sl-field-row">
-            <label for="rota-room-filter">กรองห้อง</label>
+            <label for="rota-room-filter">🚪 กรองห้อง</label>
             <select id="rota-room-filter"><option value="">ทุกห้อง</option></select>
           </div>
           <div class="sl-field-row">
-            <label>มุมมอง</label>
+            <label>👁️ มุมมอง</label>
             <div class="sl-subview-tabs" id="rota-period-tabs">
               <button type="button" class="sl-tab active" data-period="day">รายวัน</button>
               <button type="button" class="sl-tab" data-period="week">รายสัปดาห์</button>
@@ -111,67 +111,67 @@
       <div id="rota-dashboard-view" hidden></div>
 
       <div class="sl-panel" id="rota-assign-view" hidden>
-        <div class="sl-panel-title">เพิ่ม/แก้ไขตารางเวรประจำห้อง</div>
+        <div class="sl-panel-title">➕ เพิ่ม/แก้ไขตารางเวรประจำห้อง</div>
         <div class="sl-form-grid">
           <div class="sl-field-row">
-            <label for="assign-room-select">ห้อง</label>
+            <label for="assign-room-select">🚪 ห้อง</label>
             <select id="assign-room-select"></select>
           </div>
           <div class="sl-field-row">
-            <label for="assign-role-select">บทบาท</label>
+            <label for="assign-role-select">🩺 บทบาท</label>
             <select id="assign-role-select">
-              <option value="vet">สัตวแพทย์</option>
-              <option value="intern">หมอ Intern</option>
-              <option value="assistant">ผู้ช่วยประจำห้อง</option>
+              <option value="vet">👨‍⚕️ สัตวแพทย์</option>
+              <option value="intern">🩺 หมอ Intern</option>
+              <option value="assistant">🙋 ผู้ช่วยประจำห้อง</option>
             </select>
           </div>
           <div class="sl-field-row">
-            <label for="assign-staff-select">บุคลากร</label>
+            <label for="assign-staff-select">👤 บุคลากร</label>
             <select id="assign-staff-select"></select>
           </div>
           <div class="sl-field-row">
-            <label for="assign-start-date">ตั้งแต่วันที่</label>
+            <label for="assign-start-date">📅 ตั้งแต่วันที่</label>
             <input type="date" id="assign-start-date">
           </div>
           <div class="sl-field-row">
-            <label for="assign-end-date">ถึงวันที่</label>
+            <label for="assign-end-date">📅 ถึงวันที่</label>
             <input type="date" id="assign-end-date">
           </div>
           <div class="sl-field-row">
-            <label for="assign-note">หมายเหตุ (ไม่บังคับ)</label>
+            <label for="assign-note">📝 หมายเหตุ (ไม่บังคับ)</label>
             <input type="text" id="assign-note">
           </div>
         </div>
         <div class="sl-form-actions">
-          <button type="button" class="sl-btn sl-btn-primary" id="assign-save-btn">บันทึกตารางเวร</button>
+          <button type="button" class="sl-btn sl-btn-primary" id="assign-save-btn">💾 บันทึกตารางเวร</button>
         </div>
         <p class="sl-status-msg" id="assign-status-msg"></p>
 
-        <div class="sl-panel-title">ตารางเวรที่มีอยู่ (ห้องที่เลือกด้านบน)</div>
+        <div class="sl-panel-title">📋 ตารางเวรที่มีอยู่ (ห้องที่เลือกด้านบน)</div>
         <div class="sl-table" id="assign-list"></div>
       </div>
 
       <div class="sl-panel" id="rota-staffreport-view" hidden>
-        <div class="sl-panel-title">รายงานตารางเวรรายเดือนของบุคลากร</div>
+        <div class="sl-panel-title">📆 รายงานตารางเวรรายเดือนของบุคลากร</div>
         <p class="sl-note">แสดงเฉพาะวันจันทร์-ศุกร์ (ตารางเวรนี้ไม่มีวันเสาร์-อาทิตย์)</p>
         <div class="sl-field-row">
-          <label for="staffreport-search">ค้นหาบุคลากร</label>
-          <input type="text" id="staffreport-search" placeholder="พิมพ์ชื่อบุคลากร..." autocomplete="off">
+          <label for="staffreport-search">👤 ค้นหาบุคลากร</label>
+          <input type="text" id="staffreport-search" placeholder="🔍 พิมพ์ชื่อบุคลากร..." autocomplete="off">
           <div class="sl-search-results" id="staffreport-search-results"></div>
           <p class="sl-status-msg" id="staffreport-selected"></p>
         </div>
         <div class="sl-form-grid">
           <div class="sl-field-row">
-            <label for="staffreport-month-select">เดือน</label>
+            <label for="staffreport-month-select">📅 เดือน</label>
             <select id="staffreport-month-select"></select>
           </div>
           <div class="sl-field-row">
             <label>&nbsp;</label>
-            <button type="button" class="sl-btn" id="staffreport-run-btn">แสดงรายงาน</button>
+            <button type="button" class="sl-btn" id="staffreport-run-btn">🔍 แสดงรายงาน</button>
           </div>
         </div>
         <div class="sl-form-actions">
-          <button type="button" class="sl-btn sl-btn-primary" id="staffreport-export-btn">ดาวน์โหลด CSV</button>
+          <button type="button" class="sl-btn sl-btn-primary" id="staffreport-export-btn">⬇️ ดาวน์โหลด CSV</button>
         </div>
         <p class="sl-status-msg" id="staffreport-status"></p>
         <div id="staffreport-table"></div>
@@ -182,57 +182,57 @@
     <!-- ================= LEAVE LOG ================= -->
     <section class="sl-view" id="view-leaves" hidden>
       <div class="sl-panel">
-        <div class="sl-panel-title">บันทึกการลาใหม่</div>
+        <div class="sl-panel-title">✏️ บันทึกการลาใหม่</div>
 
         <div class="sl-field-row">
-          <label for="leave-staff-search">ค้นหาบุคลากร</label>
-          <input type="text" id="leave-staff-search" placeholder="พิมพ์ชื่อบุคลากร..." autocomplete="off">
+          <label for="leave-staff-search">👤 ค้นหาบุคลากร</label>
+          <input type="text" id="leave-staff-search" placeholder="🔍 พิมพ์ชื่อบุคลากร..." autocomplete="off">
           <div class="sl-search-results" id="leave-staff-results"></div>
           <p class="sl-status-msg" id="leave-staff-selected"></p>
         </div>
 
         <div class="sl-form-grid">
           <div class="sl-field-row">
-            <label for="leave-start-date">ตั้งแต่วันที่</label>
+            <label for="leave-start-date">📅 ตั้งแต่วันที่</label>
             <input type="date" id="leave-start-date">
           </div>
           <div class="sl-field-row">
-            <label for="leave-end-date">ถึงวันที่</label>
+            <label for="leave-end-date">📅 ถึงวันที่</label>
             <input type="date" id="leave-end-date">
           </div>
           <div class="sl-field-row">
-            <label for="leave-type-select">ประเภท</label>
+            <label for="leave-type-select">🏷️ ประเภท</label>
             <select id="leave-type-select">
-              <option value="sick">ลาป่วย</option>
-              <option value="personal">ลากิจ</option>
-              <option value="vacation">ลาพักร้อน</option>
-              <option value="nightshift">ออกเวรไนท์</option>
-              <option value="seminar">ลาสัมมนา/ราชการ</option>
-              <option value="covering">ทำงานแทนหน่วยอื่น</option>
+              <option value="sick">🤒 ลาป่วย</option>
+              <option value="personal">🏠 ลากิจ</option>
+              <option value="vacation">🏖️ ลาพักร้อน</option>
+              <option value="nightshift">🌙 ออกเวรไนท์</option>
+              <option value="seminar">📚 ลาสัมมนา/ราชการ</option>
+              <option value="covering">🔄 ทำงานแทนหน่วยอื่น</option>
             </select>
           </div>
           <div class="sl-field-row" id="leave-covering-dept-row" hidden>
-            <label for="leave-covering-dept-select">ไปช่วยแผนก</label>
+            <label for="leave-covering-dept-select">🏢 ไปช่วยแผนก</label>
             <select id="leave-covering-dept-select"></select>
           </div>
           <div class="sl-field-row">
-            <label for="leave-note">หมายเหตุ (ไม่บังคับ)</label>
+            <label for="leave-note">📝 หมายเหตุ (ไม่บังคับ)</label>
             <input type="text" id="leave-note">
           </div>
           <div class="sl-field-row">
-            <label for="leave-user-input">ชื่อผู้บันทึก</label>
+            <label for="leave-user-input">🖊️ ชื่อผู้บันทึก</label>
             <input type="text" id="leave-user-input" placeholder="ชื่อ/ชื่อเล่นของคุณ">
           </div>
         </div>
 
         <div class="sl-form-actions">
-          <button type="button" class="sl-btn sl-btn-primary" id="leave-save-btn">บันทึกการลา</button>
+          <button type="button" class="sl-btn sl-btn-primary" id="leave-save-btn">💾 บันทึกการลา</button>
         </div>
         <p class="sl-status-msg" id="leave-form-status"></p>
       </div>
 
       <div class="sl-panel">
-        <div class="sl-panel-title">รายการลาทั้งหมด</div>
+        <div class="sl-panel-title">📋 รายการลาทั้งหมด</div>
         <div class="sl-table" id="leave-log-table"></div>
       </div>
     </section>
@@ -241,7 +241,7 @@
     <section class="sl-view" id="view-admin" hidden>
 
       <div class="sl-panel">
-        <div class="sl-panel-title">แผนก</div>
+        <div class="sl-panel-title">🏢 แผนก</div>
         <div class="sl-form-grid">
           <div class="sl-field-row">
             <label for="dept-name-input">ชื่อแผนกใหม่</label>
@@ -249,17 +249,17 @@
           </div>
         </div>
         <div class="sl-form-actions">
-          <button type="button" class="sl-btn sl-btn-primary" id="dept-add-btn">เพิ่มแผนก</button>
+          <button type="button" class="sl-btn sl-btn-primary" id="dept-add-btn">➕ เพิ่มแผนก</button>
         </div>
         <p class="sl-status-msg" id="dept-status-msg"></p>
         <div class="sl-table" id="dept-table"></div>
       </div>
 
       <div class="sl-panel">
-        <div class="sl-panel-title">ห้อง (สำหรับตารางเวร)</div>
+        <div class="sl-panel-title">🚪 ห้อง (สำหรับตารางเวร)</div>
         <div class="sl-form-grid">
           <div class="sl-field-row">
-            <label for="room-dept-select">แผนก</label>
+            <label for="room-dept-select">🏢 แผนก</label>
             <select id="room-dept-select"></select>
           </div>
           <div class="sl-field-row">
@@ -267,35 +267,35 @@
             <input type="text" id="room-name-input" placeholder="เช่น ห้องตรวจ 1">
           </div>
           <div class="sl-field-row">
-            <label for="room-phone-input">เบอร์โทร (ไม่บังคับ)</label>
+            <label for="room-phone-input">☎️ เบอร์โทร (ไม่บังคับ)</label>
             <input type="text" id="room-phone-input">
           </div>
         </div>
         <div class="sl-form-actions">
-          <button type="button" class="sl-btn sl-btn-primary" id="room-add-btn">เพิ่มห้อง</button>
+          <button type="button" class="sl-btn sl-btn-primary" id="room-add-btn">➕ เพิ่มห้อง</button>
         </div>
         <p class="sl-status-msg" id="room-status-msg"></p>
         <div class="sl-table" id="room-table"></div>
       </div>
 
       <div class="sl-panel">
-        <div class="sl-panel-title">บุคลากร</div>
+        <div class="sl-panel-title">👤 บุคลากร</div>
         <div class="sl-form-grid">
           <div class="sl-field-row">
             <label for="staff-name-input">ชื่อ</label>
             <input type="text" id="staff-name-input">
           </div>
           <div class="sl-field-row">
-            <label for="staff-position-input">ตำแหน่ง</label>
+            <label for="staff-position-input">🏷️ ตำแหน่ง</label>
             <input type="text" id="staff-position-input" placeholder="เช่น หมอ, ผู้ช่วย, พยาบาล">
           </div>
           <div class="sl-field-row">
-            <label for="staff-dept-select">แผนกต้นสังกัด</label>
+            <label for="staff-dept-select">🏢 แผนกต้นสังกัด</label>
             <select id="staff-dept-select"></select>
           </div>
         </div>
         <div class="sl-form-actions">
-          <button type="button" class="sl-btn sl-btn-primary" id="staff-add-btn">เพิ่มบุคลากร</button>
+          <button type="button" class="sl-btn sl-btn-primary" id="staff-add-btn">➕ เพิ่มบุคลากร</button>
         </div>
         <p class="sl-status-msg" id="staff-status-msg"></p>
         <div class="sl-table" id="staff-table"></div>
@@ -306,29 +306,29 @@
     <!-- ================= REPORT / CSV ================= -->
     <section class="sl-view" id="view-report" hidden>
       <div class="sl-panel">
-        <div class="sl-panel-title">รายงานการลา</div>
+        <div class="sl-panel-title">📊 รายงานการลา</div>
         <div class="sl-daterange">
           <div class="sl-field-row">
-            <label for="report-start-date">ตั้งแต่วันที่</label>
+            <label for="report-start-date">📅 ตั้งแต่วันที่</label>
             <input type="date" id="report-start-date">
           </div>
           <div class="sl-field-row">
-            <label for="report-end-date">ถึงวันที่</label>
+            <label for="report-end-date">📅 ถึงวันที่</label>
             <input type="date" id="report-end-date">
           </div>
           <div class="sl-field-row">
-            <label for="report-dept-select">แผนก</label>
+            <label for="report-dept-select">🏢 แผนก</label>
             <select id="report-dept-select">
               <option value="">ทุกแผนก</option>
             </select>
           </div>
           <div class="sl-field-row">
             <label>&nbsp;</label>
-            <button type="button" class="sl-btn" id="report-run-btn">แสดงรายงาน</button>
+            <button type="button" class="sl-btn" id="report-run-btn">🔍 แสดงรายงาน</button>
           </div>
         </div>
         <div class="sl-form-actions">
-          <button type="button" class="sl-btn sl-btn-primary" id="report-export-btn">ดาวน์โหลด CSV</button>
+          <button type="button" class="sl-btn sl-btn-primary" id="report-export-btn">⬇️ ดาวน์โหลด CSV</button>
         </div>
         <p class="sl-status-msg" id="report-status-msg"></p>
       </div>
@@ -343,42 +343,42 @@
       <div class="sl-modal-title" id="edit-modal-title"></div>
       <div class="sl-form-grid" id="edit-date-range-row" hidden>
         <div class="sl-field-row">
-          <label for="edit-start-date">ตั้งแต่วันที่</label>
+          <label for="edit-start-date">📅 ตั้งแต่วันที่</label>
           <input type="date" id="edit-start-date">
         </div>
         <div class="sl-field-row">
-          <label for="edit-end-date">ถึงวันที่</label>
+          <label for="edit-end-date">📅 ถึงวันที่</label>
           <input type="date" id="edit-end-date">
         </div>
       </div>
       <div class="sl-field-row">
-        <label for="edit-type-select">ประเภทการลา</label>
+        <label for="edit-type-select">🏷️ ประเภทการลา</label>
         <select id="edit-type-select">
-          <option value="">ปกติ / ไม่ลา (ลบสถานะ)</option>
-          <option value="sick">ลาป่วย</option>
-          <option value="personal">ลากิจ</option>
-          <option value="vacation">ลาพักร้อน</option>
-          <option value="nightshift">ออกเวรไนท์</option>
-          <option value="seminar">ลาสัมมนา/ราชการ</option>
-          <option value="covering">ทำงานแทนหน่วยอื่น</option>
+          <option value="">✅ ปกติ / ไม่ลา (ลบสถานะ)</option>
+          <option value="sick">🤒 ลาป่วย</option>
+          <option value="personal">🏠 ลากิจ</option>
+          <option value="vacation">🏖️ ลาพักร้อน</option>
+          <option value="nightshift">🌙 ออกเวรไนท์</option>
+          <option value="seminar">📚 ลาสัมมนา/ราชการ</option>
+          <option value="covering">🔄 ทำงานแทนหน่วยอื่น</option>
         </select>
       </div>
       <div class="sl-field-row" id="edit-covering-dept-row" hidden>
-        <label for="edit-covering-dept-select">ไปช่วยแผนก</label>
+        <label for="edit-covering-dept-select">🏢 ไปช่วยแผนก</label>
         <select id="edit-covering-dept-select"></select>
       </div>
       <div class="sl-field-row">
-        <label for="edit-note-input">หมายเหตุ (ไม่บังคับ)</label>
+        <label for="edit-note-input">📝 หมายเหตุ (ไม่บังคับ)</label>
         <input type="text" id="edit-note-input">
       </div>
       <div class="sl-field-row">
-        <label for="edit-user-input">ชื่อผู้บันทึก</label>
+        <label for="edit-user-input">🖊️ ชื่อผู้บันทึก</label>
         <input type="text" id="edit-user-input" placeholder="ชื่อ/ชื่อเล่นของคุณ">
       </div>
-      <button type="button" class="sl-btn sl-btn-danger" id="edit-remove-assignment-btn" hidden style="width:100%;">ลบออกจากห้องนี้ (เลิกตารางเวร)</button>
+      <button type="button" class="sl-btn sl-btn-danger" id="edit-remove-assignment-btn" hidden style="width:100%;">🗑️ ลบออกจากห้องนี้ (เลิกตารางเวร)</button>
       <div class="sl-modal-actions">
-        <button type="button" class="sl-btn" id="edit-cancel-btn">ยกเลิก</button>
-        <button type="button" class="sl-btn sl-btn-primary" id="edit-save-btn">บันทึก</button>
+        <button type="button" class="sl-btn" id="edit-cancel-btn">✖️ ยกเลิก</button>
+        <button type="button" class="sl-btn sl-btn-primary" id="edit-save-btn">💾 บันทึก</button>
       </div>
       <p class="sl-status-msg" id="edit-modal-status"></p>
     </div>
@@ -388,26 +388,26 @@
     <div class="sl-modal">
       <div class="sl-modal-title" id="quick-assign-title"></div>
       <div class="sl-field-row">
-        <label for="quick-assign-staff-select">บุคลากร</label>
+        <label for="quick-assign-staff-select">👤 บุคลากร</label>
         <select id="quick-assign-staff-select"></select>
       </div>
       <div class="sl-form-grid">
         <div class="sl-field-row">
-          <label for="quick-assign-start-date">ตั้งแต่วันที่</label>
+          <label for="quick-assign-start-date">📅 ตั้งแต่วันที่</label>
           <input type="date" id="quick-assign-start-date">
         </div>
         <div class="sl-field-row">
-          <label for="quick-assign-end-date">ถึงวันที่</label>
+          <label for="quick-assign-end-date">📅 ถึงวันที่</label>
           <input type="date" id="quick-assign-end-date">
         </div>
       </div>
       <div class="sl-field-row">
-        <label for="quick-assign-note">หมายเหตุ (ไม่บังคับ)</label>
+        <label for="quick-assign-note">📝 หมายเหตุ (ไม่บังคับ)</label>
         <input type="text" id="quick-assign-note">
       </div>
       <div class="sl-modal-actions">
-        <button type="button" class="sl-btn" id="quick-assign-cancel-btn">ยกเลิก</button>
-        <button type="button" class="sl-btn sl-btn-primary" id="quick-assign-save-btn">บันทึก</button>
+        <button type="button" class="sl-btn" id="quick-assign-cancel-btn">✖️ ยกเลิก</button>
+        <button type="button" class="sl-btn sl-btn-primary" id="quick-assign-save-btn">💾 บันทึก</button>
       </div>
       <p class="sl-status-msg" id="quick-assign-status"></p>
     </div>

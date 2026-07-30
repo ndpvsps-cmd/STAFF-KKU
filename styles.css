@@ -5,6 +5,12 @@
   --color-primary: #1d4ed8;
   --color-primary-bright: #2563eb;
   --color-primary-dark: #1e3a8a;
+  --color-accent: #f97316;
+  --color-accent-bright: #fb923c;
+  --color-accent-dark: #c2410c;
+  --color-accent-bg: #ffedd5;
+  --color-neutral-bg: #f1f5f9;
+  --color-neutral-border: #e2e8f0;
   --color-danger: #dc2626;
   --color-danger-bg: #fee2e2;
   --color-warning-bg: #fef3c7;
@@ -13,8 +19,10 @@
   --color-muted: #64748b;
   --color-border: #bfdbfe;
   --gradient-gold: linear-gradient(135deg, #3b82f6, #1d4ed8 55%, #1e3a8a);
-  --gradient-gold-text: linear-gradient(135deg, #1d4ed8, #2563eb 55%, #1e3a8a);
+  --gradient-gold-text: linear-gradient(135deg, #1d4ed8, #f97316 60%, #1d4ed8);
+  --gradient-accent: linear-gradient(135deg, #fb923c, #f97316 55%, #c2410c);
   --shadow-glow: 0 3px 14px rgba(29, 78, 216, 0.3);
+  --shadow-glow-accent: 0 3px 14px rgba(249, 115, 22, 0.35);
   --font-fantasy: "Cinzel", "Sarabun", sans-serif;
   --font-body: "Sarabun", -apple-system, BlinkMacSystemFont, "Segoe UI", Tahoma, sans-serif;
   --radius: 10px;
@@ -32,7 +40,8 @@ body {
   font-family: var(--font-body);
   background:
     radial-gradient(ellipse 700px 400px at 15% -5%, rgba(37, 99, 235, 0.12), transparent 60%),
-    radial-gradient(ellipse 800px 500px at 50% 100%, rgba(29, 78, 216, 0.08), transparent 60%),
+    radial-gradient(ellipse 600px 400px at 90% 10%, rgba(249, 115, 22, 0.10), transparent 60%),
+    radial-gradient(ellipse 800px 500px at 50% 100%, rgba(100, 116, 139, 0.08), transparent 60%),
     var(--color-bg);
   color: var(--color-text);
   line-height: 1.5;
@@ -205,9 +214,13 @@ input:focus, select:focus {
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  border: 1px solid var(--color-border);
-  background: var(--color-panel-alt);
+  border: 1px solid var(--color-neutral-border);
+  background: var(--color-neutral-bg);
   color: var(--color-text);
+}
+
+.sl-btn:hover {
+  border-color: var(--color-muted);
 }
 
 .sl-btn.sl-btn-primary {
@@ -386,13 +399,13 @@ input:focus, select:focus {
 
 .sl-chip.sl-chip-add {
   background: transparent;
-  border: 1px dashed var(--color-primary);
-  color: var(--color-primary);
+  border: 1px dashed var(--color-accent);
+  color: var(--color-accent-dark);
   font-family: inherit;
 }
 
 .sl-chip.sl-chip-add:hover {
-  background: var(--color-panel-alt);
+  background: var(--color-accent-bg);
 }
 
 .sl-legend {
@@ -431,9 +444,9 @@ input:focus, select:focus {
 
 .sl-today-btn {
   flex-shrink: 0;
-  background: var(--gradient-gold);
+  background: var(--gradient-accent);
   color: #ffffff;
-  border: 1px solid #1e3a8a;
+  border: 1px solid var(--color-accent-dark);
   border-radius: 8px;
   padding: 10px 14px;
   font-size: 1rem;
@@ -506,7 +519,8 @@ input:focus, select:focus {
 }
 
 .sl-day-btn.is-today {
-  border-color: var(--color-primary-bright);
+  border-color: var(--color-accent);
+  border-width: 2px;
 }
 
 .sl-date-heading {
