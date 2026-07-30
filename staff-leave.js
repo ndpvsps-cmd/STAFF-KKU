@@ -5,6 +5,7 @@
 
   const ROLE_LABELS = { vet: "👨‍⚕️ สัตวแพทย์", intern: "🩺 หมอ Intern", assistant: "🙋 ผู้ช่วยประจำห้อง" };
   const ROLE_ORDER = ["vet", "intern", "assistant"];
+  const ROLE_MAX_PER_ROOM = { vet: 1, intern: 1, assistant: 2 };
   const LEAVE_TYPES = {
     sick: "🤒 ลาป่วย",
     personal: "🏠 ลากิจ",
@@ -906,6 +907,13 @@
       assignStatusMsg.classList.add("sl-status-error");
       return;
     }
+    const roleMax = ROLE_MAX_PER_ROOM[assignRoleSelect.value];
+    const existingCount = countOverlappingAssignments(assignRoomSelect.value, assignRoleSelect.value, assignStartDate.value, assignEndDate.value);
+    if (existingCount >= roleMax) {
+      assignStatusMsg.textContent = "❌ ห้องนี้มี" + ROLE_LABELS[assignRoleSelect.value] + "ครบ " + roleMax + " คนแล้วในช่วงวันที่เลือก";
+      assignStatusMsg.classList.add("sl-status-error");
+      return;
+    }
     assignSaveBtn.disabled = true;
     assignStatusMsg.textContent = "กำลังบันทึก...";
     try {
@@ -949,6 +957,15 @@
   function staffCandidatesForRole(role) {
     if (role === "vet" || role === "intern") return DATA.staff.filter((s) => personCategory(s) === "doctor");
     return DATA.staff;
+  }
+
+  function countOverlappingAssignments(roomId, role, startDate, endDate) {
+    return DATA.assignments.filter((a) =>
+      String(a.roomId) === String(roomId) &&
+      a.role === role &&
+      a.startDate <= endDate &&
+      a.endDate >= startDate
+    ).length;
   }
 
   function openQuickAssignModal(room, role, dateStr) {
@@ -998,6 +1015,12 @@
     }
     if (quickAssignEndDate.value < quickAssignStartDate.value) {
       quickAssignStatus.textContent = "วันที่สิ้นสุดต้องไม่ก่อนวันที่เริ่มต้น";
+      return;
+    }
+    const roleMax = ROLE_MAX_PER_ROOM[quickAssignCtx.role];
+    const existingCount = countOverlappingAssignments(quickAssignCtx.room.id, quickAssignCtx.role, quickAssignStartDate.value, quickAssignEndDate.value);
+    if (existingCount >= roleMax) {
+      quickAssignStatus.textContent = "❌ ห้องนี้มี" + ROLE_LABELS[quickAssignCtx.role] + "ครบ " + roleMax + " คนแล้วในช่วงวันที่เลือก";
       return;
     }
     quickAssignSaveBtn.disabled = true;
