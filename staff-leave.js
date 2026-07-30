@@ -202,6 +202,7 @@
     rota: document.getElementById("view-rota"),
     leaves: document.getElementById("view-leaves"),
     admin: document.getElementById("view-admin"),
+    dashboard: document.getElementById("view-dashboard"),
     report: document.getElementById("view-report")
   };
   const rotaBadge = document.getElementById("rota-badge");
@@ -240,6 +241,7 @@
     else if (key === "rota") renderRota();
     else if (key === "leaves") renderLeaveLog();
     else if (key === "admin") renderAdmin();
+    else if (key === "dashboard") renderDashboard();
     else if (key === "report") { /* rendered on demand via button */ }
   }
 
@@ -1851,6 +1853,223 @@
     });
     rotaRoomFilter.value = prevFilter;
     if (rotaRoomFilter.value !== prevFilter) rotaState.roomFilter = "";
+  }
+
+  // ================= DASHBOARD =================
+  const dashYearSelect = document.getElementById("dash-year-select");
+  const dashPeriodTabs = document.getElementById("dash-period-tabs");
+  const dashMonthRow = document.getElementById("dash-month-row");
+  const dashMonthSelect = document.getElementById("dash-month-select");
+  const dashTrendChart = document.getElementById("dash-trend-chart");
+  const dashDeptChart = document.getElementById("dash-dept-chart");
+  const dashTotalSummary = document.getElementById("dash-total-summary");
+  const dashStaffSearch = document.getElementById("dash-staff-search");
+  const dashStaffTable = document.getElementById("dash-staff-table");
+
+  const dashState = { year: 0, period: "month", month: 0 };
+  (function initDashState() {
+    const now = new Date();
+    dashState.year = now.getFullYear();
+    dashState.month = now.getMonth() + 1;
+  })();
+
+  function renderDashYearSelect() {
+    const prevValue = dashYearSelect.value;
+    dashYearSelect.innerHTML = "";
+    const current = new Date().getFullYear();
+    for (let y = current - 3; y <= current + 1; y++) {
+      const opt = document.createElement("option");
+      opt.value = y;
+      opt.textContent = y + 543;
+      dashYearSelect.appendChild(opt);
+    }
+    dashYearSelect.value = prevValue || dashState.year;
+  }
+
+  function renderDashMonthSelect() {
+    const prevValue = dashMonthSelect.value;
+    dashMonthSelect.innerHTML = "";
+    THAI_MONTH_NAMES.forEach((name, i) => {
+      const opt = document.createElement("option");
+      opt.value = i + 1;
+      opt.textContent = name;
+      dashMonthSelect.appendChild(opt);
+    });
+    dashMonthSelect.value = prevValue || dashState.month;
+  }
+
+  dashYearSelect.addEventListener("change", () => {
+    dashState.year = parseInt(dashYearSelect.value, 10);
+    renderDashboard();
+  });
+
+  dashMonthSelect.addEventListener("change", () => {
+    dashState.month = parseInt(dashMonthSelect.value, 10);
+    renderDashboard();
+  });
+
+  dashPeriodTabs.addEventListener("click", (e) => {
+    const btn = e.target.closest(".sl-tab");
+    if (!btn) return;
+    dashState.period = btn.dataset.period;
+    dashPeriodTabs.querySelectorAll(".sl-tab").forEach((t) => t.classList.toggle("active", t === btn));
+    dashMonthRow.hidden = dashState.period !== "month";
+    renderDashboard();
+  });
+
+  let dashStaffSearchDebounce = null;
+  dashStaffSearch.addEventListener("input", () => {
+    clearTimeout(dashStaffSearchDebounce);
+    dashStaffSearchDebounce = setTimeout(renderDashStaffTable, 150);
+  });
+
+  function leaveDaysInRange(leave, rangeStart, rangeEnd) {
+    const start = leave.startDate > rangeStart ? leave.startDate : rangeStart;
+    const end = leave.endDate < rangeEnd ? leave.endDate : rangeEnd;
+    if (start > end) return 0;
+    const [sy, sm, sd] = start.split("-").map(Number);
+    const [ey, em, ed] = end.split("-").map(Number);
+    const d1 = new Date(sy, sm - 1, sd);
+    const d2 = new Date(ey, em - 1, ed);
+    return Math.round((d2 - d1) / 86400000) + 1;
+  }
+
+  function dashFocusRange() {
+    if (dashState.period === "month") {
+      const start = dashState.year + "-" + pad2(dashState.month) + "-01";
+      const end = dashState.year + "-" + pad2(dashState.month) + "-" + pad2(daysInMonth(dashState.year, dashState.month));
+      return { start, end };
+    }
+    return { start: dashState.year + "-01-01", end: dashState.year + "-12-31" };
+  }
+
+  function renderDashTrendChart() {
+    dashTrendChart.innerHTML = "";
+    const totals = [];
+    for (let m = 1; m <= 12; m++) {
+      const start = dashState.year + "-" + pad2(m) + "-01";
+      const end = dashState.year + "-" + pad2(m) + "-" + pad2(daysInMonth(dashState.year, m));
+      let total = 0;
+      DATA.leaves.forEach((l) => { total += leaveDaysInRange(l, start, end); });
+      totals.push(total);
+    }
+    const max = Math.max(1, ...totals);
+    totals.forEach((total, i) => {
+      const month = i + 1;
+      const col = document.createElement("div");
+      col.className = "sl-trend-col";
+      const isFocused = dashState.period === "month" && month === dashState.month;
+      col.innerHTML =
+        '<span class="sl-trend-count">' + total + '</span>' +
+        '<div class="sl-trend-bar-wrap"><div class="sl-trend-bar' + (isFocused ? " sl-trend-bar-focused" : "") +
+        '" style="height:' + Math.max(2, Math.round((total / max) * 100)) + '%"></div></div>' +
+        '<span class="sl-trend-label">' + THAI_MONTH_NAMES[i].slice(0, 3) + '</span>';
+      dashTrendChart.appendChild(col);
+    });
+  }
+
+  function renderDashDeptChart() {
+    const { start, end } = dashFocusRange();
+    dashDeptChart.innerHTML = "";
+    const totals = {};
+    DATA.leaves.forEach((l) => {
+      const days = leaveDaysInRange(l, start, end);
+      if (days <= 0) return;
+      const sm = byId(DATA.staff, l.staffId);
+      const key = sm ? sm.departmentId : "_unknown";
+      totals[key] = (totals[key] || 0) + days;
+    });
+    const rows = DATA.departments
+      .map((d) => ({ label: d.name, days: totals[d.id] || 0 }))
+      .filter((r) => r.days > 0)
+      .sort((a, b) => b.days - a.days);
+
+    if (!rows.length) {
+      dashDeptChart.innerHTML = '<div class="sl-empty">📭 ไม่มีข้อมูลการลาในช่วงที่เลือก</div>';
+      return;
+    }
+    const max = Math.max(1, ...rows.map((r) => r.days));
+    rows.forEach((r) => {
+      const row = document.createElement("div");
+      row.className = "sl-hbar-row";
+      row.innerHTML =
+        '<span class="sl-hbar-label">' + escapeHtml(r.label) + '</span>' +
+        '<span class="sl-hbar-track"><span class="sl-hbar-fill" style="width:' + Math.round((r.days / max) * 100) + '%"></span></span>' +
+        '<span class="sl-hbar-count">' + r.days + ' วัน</span>';
+      dashDeptChart.appendChild(row);
+    });
+  }
+
+  function renderDashTotalSummary() {
+    const { start, end } = dashFocusRange();
+    dashTotalSummary.innerHTML = "";
+    const typeTotals = {};
+    Object.keys(LEAVE_TYPES).forEach((k) => { typeTotals[k] = 0; });
+    let grandTotal = 0;
+    DATA.leaves.forEach((l) => {
+      const days = leaveDaysInRange(l, start, end);
+      if (days <= 0) return;
+      typeTotals[l.type] = (typeTotals[l.type] || 0) + days;
+      grandTotal += days;
+    });
+
+    const totalStat = document.createElement("div");
+    totalStat.className = "sl-dash-stat sl-dash-total";
+    totalStat.innerHTML = '<span class="sl-dash-num">' + grandTotal + '</span><span class="sl-dash-label">รวมวัน-คนลาทั้งหมด</span>';
+    dashTotalSummary.appendChild(totalStat);
+
+    Object.keys(LEAVE_TYPES).forEach((key) => {
+      const stat = document.createElement("div");
+      stat.className = "sl-dash-stat";
+      stat.innerHTML = '<span class="sl-dash-num">' + typeTotals[key] + '</span><span class="sl-dash-label">' + LEAVE_TYPES[key] + "</span>";
+      dashTotalSummary.appendChild(stat);
+    });
+  }
+
+  function renderDashStaffTable() {
+    const { start, end } = dashFocusRange();
+    const totals = {};
+    DATA.leaves.forEach((l) => {
+      const days = leaveDaysInRange(l, start, end);
+      if (days <= 0) return;
+      totals[l.staffId] = (totals[l.staffId] || 0) + days;
+    });
+
+    const q = dashStaffSearch.value.trim();
+    let rows = DATA.staff
+      .map((s) => ({ staff: s, days: totals[s.id] || 0 }))
+      .filter((r) => r.days > 0);
+    if (q) rows = rows.filter((r) => r.staff.name.indexOf(q) !== -1);
+    rows.sort((a, b) => b.days - a.days);
+
+    dashStaffTable.innerHTML = "";
+    if (!rows.length) {
+      dashStaffTable.innerHTML = '<div class="sl-empty">📭 ไม่มีข้อมูลการลาในช่วงที่เลือก</div>';
+      return;
+    }
+    const head = document.createElement("div");
+    head.className = "sl-table-row sl-table-head";
+    head.innerHTML = '<span class="sl-table-cell">ชื่อ</span><span class="sl-table-cell">แผนก</span><span class="sl-table-cell">วันลารวม</span>';
+    dashStaffTable.appendChild(head);
+    rows.forEach((r) => {
+      const row = document.createElement("div");
+      row.className = "sl-table-row";
+      row.innerHTML =
+        '<span class="sl-table-cell" style="color:' + personTextColor(r.staff) + ';font-weight:700;">' + escapeHtml(r.staff.name) + '</span>' +
+        '<span class="sl-table-cell">' + escapeHtml(deptName(r.staff.departmentId)) + '</span>' +
+        '<span class="sl-table-cell">' + r.days + ' วัน</span>';
+      dashStaffTable.appendChild(row);
+    });
+  }
+
+  function renderDashboard() {
+    renderDashYearSelect();
+    renderDashMonthSelect();
+    dashMonthRow.hidden = dashState.period !== "month";
+    renderDashTrendChart();
+    renderDashDeptChart();
+    renderDashTotalSummary();
+    renderDashStaffTable();
   }
 
   // ================= REPORT / CSV =================

@@ -44,7 +44,8 @@
         <button type="button" class="sl-tab" data-view="rota">🚪 ตารางประจำห้อง<span class="sl-badge" id="rota-badge" hidden></span></button>
         <button type="button" class="sl-tab" data-view="leaves">📝 บันทึกการลา</button>
         <button type="button" class="sl-tab" data-view="admin">👥 บุคลากร/แผนก</button>
-        <button type="button" class="sl-tab" data-view="report">📊 รายงาน CSV</button>
+        <button type="button" class="sl-tab" data-view="dashboard">📊 แดชบอร์ด</button>
+        <button type="button" class="sl-tab" data-view="report">🧾 รายงาน CSV</button>
       </nav>
     </aside>
 
@@ -316,6 +317,54 @@
         <div class="sl-table" id="staff-table"></div>
       </div>
 
+    </section>
+
+    <!-- ================= DASHBOARD ================= -->
+    <section class="sl-view" id="view-dashboard" hidden>
+      <div class="sl-panel">
+        <div class="sl-panel-title">📊 ภาพรวมสถิติการลา</div>
+        <div class="sl-form-grid">
+          <div class="sl-field-row">
+            <label for="dash-year-select">📅 ปี</label>
+            <select id="dash-year-select"></select>
+          </div>
+          <div class="sl-field-row">
+            <label>👁️ ช่วงเวลา</label>
+            <div class="sl-subview-tabs" id="dash-period-tabs">
+              <button type="button" class="sl-tab active" data-period="month">รายเดือน</button>
+              <button type="button" class="sl-tab" data-period="year">รายปี</button>
+            </div>
+          </div>
+          <div class="sl-field-row" id="dash-month-row">
+            <label for="dash-month-select">เดือน</label>
+            <select id="dash-month-select"></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="sl-panel">
+        <div class="sl-panel-title">📈 แนวโน้มรายเดือน (ทั้งปี)</div>
+        <div class="sl-trend-chart" id="dash-trend-chart"></div>
+      </div>
+
+      <div class="sl-panel">
+        <div class="sl-panel-title">🏢 สรุปยอดคนลาแต่ละแผนก</div>
+        <div id="dash-dept-chart"></div>
+      </div>
+
+      <div class="sl-panel">
+        <div class="sl-panel-title">🏥 สรุปยอดรวมทั้งโรงพยาบาล</div>
+        <div class="sl-dash-summary" id="dash-total-summary"></div>
+      </div>
+
+      <div class="sl-panel">
+        <div class="sl-panel-title">👤 สถิติรายคน</div>
+        <div class="sl-field-row">
+          <label for="dash-staff-search">🔍 ค้นหาชื่อบุคลากร</label>
+          <input type="text" id="dash-staff-search" placeholder="พิมพ์ชื่อเพื่อกรอง..." autocomplete="off">
+        </div>
+        <div class="sl-table" id="dash-staff-table"></div>
+      </div>
     </section>
 
     <!-- ================= REPORT / CSV ================= -->
