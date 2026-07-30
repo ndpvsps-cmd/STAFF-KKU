@@ -33,6 +33,10 @@
   // ---- date helpers ----
   function pad2(n) { return n < 10 ? "0" + n : String(n); }
   function isoDate(d) { return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()); }
+  function addDaysToIso(iso, delta) {
+    const [y, m, d] = iso.split("-").map(Number);
+    return isoDate(new Date(y, m - 1, d + delta));
+  }
   function todayStr() { return isoDate(new Date()); }
   function daysInMonth(year, month) { return new Date(year, month, 0).getDate(); }
   function weekdayOf(year, month, day) { return THAI_WEEKDAYS[new Date(year, month - 1, day).getDay()]; }
@@ -1254,16 +1258,50 @@
 
   editRemoveAssignmentBtn.addEventListener("click", async () => {
     if (!editCtx || !editCtx.assignmentId) return;
+    const assignment = byId(DATA.assignments, editCtx.assignmentId);
+    const targetDate = editCtx.dateStr;
+    if (!assignment || !targetDate) return;
+
     editRemoveAssignmentBtn.disabled = true;
     editModalStatus.textContent = "กำลังลบ...";
     try {
-      await callApi("deleteAssignment", { id: editCtx.assignmentId });
-      DATA.assignments = DATA.assignments.filter((a) => a.id !== editCtx.assignmentId);
+      if (assignment.startDate === targetDate && assignment.endDate === targetDate) {
+        // whole assignment is just this one day — remove it entirely
+        await callApi("deleteAssignment", { id: assignment.id });
+        DATA.assignments = DATA.assignments.filter((a) => a.id !== assignment.id);
+      } else if (assignment.startDate === targetDate) {
+        // trim the day off the front
+        const newStart = addDaysToIso(targetDate, 1);
+        await callApi("updateAssignment", { id: assignment.id, startDate: newStart });
+        assignment.startDate = newStart;
+      } else if (assignment.endDate === targetDate) {
+        // trim the day off the back
+        const newEnd = addDaysToIso(targetDate, -1);
+        await callApi("updateAssignment", { id: assignment.id, endDate: newEnd });
+        assignment.endDate = newEnd;
+      } else {
+        // day is in the middle — split into a before-range and an after-range
+        const originalEnd = assignment.endDate;
+        const beforeEnd = addDaysToIso(targetDate, -1);
+        await callApi("updateAssignment", { id: assignment.id, endDate: beforeEnd });
+        assignment.endDate = beforeEnd;
+        const afterPayload = {
+          roomId: assignment.roomId,
+          staffId: assignment.staffId,
+          role: assignment.role,
+          startDate: addDaysToIso(targetDate, 1),
+          endDate: originalEnd,
+          note: assignment.note || "",
+          createdBy: assignment.createdBy || "web"
+        };
+        const res = await callApi("addAssignment", afterPayload);
+        DATA.assignments.push(Object.assign({ id: res.id }, afterPayload));
+      }
       closeEditModal();
       renderRota();
       updateRotaBadge();
     } catch (err) {
-      editModalStatus.textContent = "ลบไม่สำเร็จ: " + err.message;
+      editModalStatus.textContent = "❌ ลบไม่สำเร็จ: " + err.message;
     } finally {
       editRemoveAssignmentBtn.disabled = false;
     }
