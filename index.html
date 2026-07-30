@@ -413,6 +413,29 @@
     </div>
   </div>
 
+  <div class="sl-modal-backdrop" id="edit-staff-modal" hidden>
+    <div class="sl-modal">
+      <div class="sl-modal-title">✏️ แก้ไขข้อมูลบุคลากร</div>
+      <div class="sl-field-row">
+        <label for="edit-staff-name-input">ชื่อ</label>
+        <input type="text" id="edit-staff-name-input">
+      </div>
+      <div class="sl-field-row">
+        <label for="edit-staff-position-input">🏷️ ตำแหน่ง</label>
+        <input type="text" id="edit-staff-position-input" placeholder="เช่น หมอ, ผู้ช่วย, พยาบาล">
+      </div>
+      <div class="sl-field-row">
+        <label for="edit-staff-dept-select">🏢 แผนกต้นสังกัด</label>
+        <select id="edit-staff-dept-select"></select>
+      </div>
+      <div class="sl-modal-actions">
+        <button type="button" class="sl-btn" id="edit-staff-cancel-btn">✖️ ยกเลิก</button>
+        <button type="button" class="sl-btn sl-btn-primary" id="edit-staff-save-btn">💾 บันทึก</button>
+      </div>
+      <p class="sl-status-msg" id="edit-staff-status"></p>
+    </div>
+  </div>
+
   <script src="staff-leave-config.js"></script>
   <script src="staff-leave.js"></script>
 </body>

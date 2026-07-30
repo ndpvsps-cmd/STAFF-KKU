@@ -1586,6 +1586,65 @@
     }
   });
 
+  // ---- edit staff (name/position/department — used when someone moves department) ----
+  const editStaffModal = document.getElementById("edit-staff-modal");
+  const editStaffNameInput = document.getElementById("edit-staff-name-input");
+  const editStaffPositionInput = document.getElementById("edit-staff-position-input");
+  const editStaffDeptSelect = document.getElementById("edit-staff-dept-select");
+  const editStaffSaveBtn = document.getElementById("edit-staff-save-btn");
+  const editStaffCancelBtn = document.getElementById("edit-staff-cancel-btn");
+  const editStaffStatus = document.getElementById("edit-staff-status");
+
+  let editStaffId = null;
+
+  function openEditStaffModal(staffMember) {
+    editStaffId = staffMember.id;
+    editStaffNameInput.value = staffMember.name;
+    editStaffPositionInput.value = staffMember.position || "";
+    editStaffDeptSelect.value = staffMember.departmentId;
+    editStaffStatus.textContent = "";
+    editStaffModal.hidden = false;
+  }
+
+  function closeEditStaffModal() {
+    editStaffModal.hidden = true;
+    editStaffId = null;
+  }
+
+  editStaffCancelBtn.addEventListener("click", closeEditStaffModal);
+  editStaffModal.addEventListener("click", (e) => {
+    if (e.target === editStaffModal) closeEditStaffModal();
+  });
+
+  editStaffSaveBtn.addEventListener("click", async () => {
+    if (!editStaffId) return;
+    const name = editStaffNameInput.value.trim();
+    if (!name || !editStaffDeptSelect.value) {
+      editStaffStatus.textContent = "กรุณากรอกชื่อและเลือกแผนก";
+      return;
+    }
+    editStaffSaveBtn.disabled = true;
+    editStaffStatus.textContent = "กำลังบันทึก...";
+    try {
+      const payload = {
+        id: editStaffId,
+        name,
+        position: editStaffPositionInput.value.trim(),
+        departmentId: editStaffDeptSelect.value
+      };
+      await callApi("updateStaff", payload);
+      const idx = DATA.staff.findIndex((s) => s.id === editStaffId);
+      if (idx !== -1) DATA.staff[idx] = Object.assign({}, DATA.staff[idx], payload);
+      closeEditStaffModal();
+      refreshSharedSelects();
+      renderAdmin();
+    } catch (err) {
+      editStaffStatus.textContent = "❌ บันทึกไม่สำเร็จ: " + err.message;
+    } finally {
+      editStaffSaveBtn.disabled = false;
+    }
+  });
+
   function renderAdmin() {
     deptTable.innerHTML = "";
     if (!DATA.departments.length) {
@@ -1625,13 +1684,22 @@
           '<span class="sl-table-cell" style="color:' + personTextColor(s) + ';font-weight:700;">' + escapeHtml(s.name) + '</span>' +
           '<span class="sl-table-cell">' + escapeHtml(s.position || "") + '</span>' +
           '<span class="sl-table-cell">' + escapeHtml(deptName(s.departmentId)) + '</span>';
+        const actions = document.createElement("span");
+        actions.className = "sl-table-actions";
+        const editBtn = document.createElement("button");
+        editBtn.type = "button";
+        editBtn.className = "sl-btn";
+        editBtn.textContent = "✏️ แก้ไข";
+        editBtn.addEventListener("click", () => openEditStaffModal(s));
+        actions.appendChild(editBtn);
+        row.appendChild(actions);
         staffTable.appendChild(row);
       });
     }
   }
 
   function fillDeptSelects() {
-    const selects = [roomDeptSelect, staffDeptSelect, editCoveringDeptSelect, leaveCoveringDeptSelect, document.getElementById("report-dept-select")];
+    const selects = [roomDeptSelect, staffDeptSelect, editCoveringDeptSelect, leaveCoveringDeptSelect, document.getElementById("report-dept-select"), document.getElementById("edit-staff-dept-select")];
     selects.forEach((sel) => {
       if (!sel) return;
       const keepFirst = sel.id === "report-dept-select";
