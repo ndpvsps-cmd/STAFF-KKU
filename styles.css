@@ -1,34 +1,32 @@
 :root {
-  --color-bg: #eef4ff;
-  --color-panel: #ffffff;
-  --color-panel-alt: #e5eefc;
-  --color-primary: #1d4ed8;
-  --color-primary-bright: #2563eb;
-  --color-primary-dark: #1e3a8a;
-  --color-accent: #f97316;
-  --color-accent-bright: #fb923c;
-  --color-accent-dark: #c2410c;
-  --color-accent-bg: #ffedd5;
-  --color-neutral-bg: #f1f5f9;
-  --color-neutral-border: #e2e8f0;
+  /* beach sunset theme: sky (sun/coral/pink), sea (teal), sand (warm neutrals) */
+  --color-bg: #fdf1e1;
+  --color-panel: #fffaf2;
+  --color-panel-alt: #fbe6c8;
+  --color-primary: #0d9488;
+  --color-primary-bright: #14b8a6;
+  --color-primary-dark: #115e59;
+  --color-accent: #fb7185;
+  --color-accent-bright: #fda4af;
+  --color-accent-dark: #be123c;
+  --color-accent-bg: #ffe4e6;
+  --color-neutral-bg: #f5ebdc;
+  --color-neutral-border: #e7d3ae;
   --color-danger: #dc2626;
   --color-danger-bg: #fee2e2;
   --color-warning-bg: #fef3c7;
   --color-warning-text: #b45309;
-  --color-text: #1e293b;
-  --color-muted: #64748b;
-  --color-border: #bfdbfe;
-  --gradient-gold: linear-gradient(135deg, #3b82f6, #1d4ed8 55%, #1e3a8a);
-  --gradient-gold-text: linear-gradient(135deg, #1d4ed8, #f97316 60%, #1d4ed8);
-  --gradient-accent: linear-gradient(135deg, #fb923c, #f97316 55%, #c2410c);
-  --shadow-glow: 0 3px 14px rgba(29, 78, 216, 0.3);
-  --shadow-glow-accent: 0 3px 14px rgba(249, 115, 22, 0.35);
+  --color-text: #3f2d20;
+  --color-muted: #8a6d55;
+  --color-border: #f3cd94;
+  --gradient-gold: linear-gradient(135deg, #14b8a6, #0d9488 55%, #115e59);
+  --gradient-gold-text: linear-gradient(100deg, #facc15, #fb923c 35%, #fb7185 65%, #0d9488 100%);
+  --gradient-accent: linear-gradient(135deg, #fbbf24, #fb7185 55%, #be123c);
+  --shadow-glow: 0 3px 14px rgba(13, 148, 136, 0.3);
+  --shadow-glow-accent: 0 3px 14px rgba(251, 113, 133, 0.35);
   --font-fantasy: "Cinzel", "Sarabun", sans-serif;
   --font-body: "Sarabun", -apple-system, BlinkMacSystemFont, "Segoe UI", Tahoma, sans-serif;
   --radius: 10px;
-  --sl-role-doctor: #1d4ed8;
-  --sl-role-assistant: #db2777;
-  --sl-role-other: #6b8e23;
 }
 
 * {
@@ -39,9 +37,10 @@ body {
   margin: 0;
   font-family: var(--font-body);
   background:
-    radial-gradient(ellipse 700px 400px at 15% -5%, rgba(37, 99, 235, 0.12), transparent 60%),
-    radial-gradient(ellipse 600px 400px at 90% 10%, rgba(249, 115, 22, 0.10), transparent 60%),
-    radial-gradient(ellipse 800px 500px at 50% 100%, rgba(100, 116, 139, 0.08), transparent 60%),
+    radial-gradient(ellipse 650px 420px at 50% -8%, rgba(251, 191, 36, 0.30), transparent 60%),
+    radial-gradient(ellipse 750px 500px at 12% 15%, rgba(251, 113, 133, 0.16), transparent 60%),
+    radial-gradient(ellipse 850px 550px at 88% 25%, rgba(168, 85, 247, 0.10), transparent 60%),
+    radial-gradient(ellipse 900px 600px at 50% 105%, rgba(13, 148, 136, 0.18), transparent 60%),
     var(--color-bg);
   color: var(--color-text);
   line-height: 1.5;
@@ -174,7 +173,7 @@ input:focus, select:focus {
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: 14px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 6px 18px rgba(29, 78, 216, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 6px 18px rgba(13, 148, 136, 0.08);
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -225,7 +224,7 @@ input:focus, select:focus {
 
 .sl-btn.sl-btn-primary {
   background: var(--gradient-gold);
-  border: 1px solid #1e3a8a;
+  border: 1px solid var(--color-primary-dark);
   color: #ffffff;
 }
 
@@ -775,7 +774,7 @@ input:focus, select:focus {
 .sl-modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(15, 30, 70, 0.45);
+  background: rgba(40, 24, 16, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;

@@ -26,7 +26,7 @@
     "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน",
     "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
   ];
-  const ROLE_TEXT_COLORS = { doctor: "#1d4ed8", assistant: "#db2777", other: "#6b8e23" };
+  const ROLE_TEXT_COLORS = { doctor: "#0d9488", assistant: "#e11d48", other: "#a16207" };
 
   let DATA = { departments: [], rooms: [], staff: [], assignments: [], leaves: [] };
 
