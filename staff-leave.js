@@ -205,13 +205,34 @@
   };
   const rotaBadge = document.getElementById("rota-badge");
 
+  // ---- collapsible sidebar (hide/show like Claude's app) ----
+  const appShell = document.getElementById("app-shell");
+  const sidebarOpenBtn = document.getElementById("sidebar-open-btn");
+  const sidebarCloseBtn = document.getElementById("sidebar-close-btn");
+  const sidebarBackdrop = document.getElementById("sidebar-backdrop");
+  const MOBILE_QUERY = "(max-width: 860px)";
+
+  function setSidebarCollapsed(collapsed) {
+    appShell.classList.toggle("sl-sidebar-collapsed", collapsed);
+    localStorage.setItem("slSidebarCollapsed", collapsed ? "1" : "0");
+  }
+
+  if (localStorage.getItem("slSidebarCollapsed") === "1") setSidebarCollapsed(true);
+
+  sidebarCloseBtn.addEventListener("click", () => setSidebarCollapsed(true));
+  sidebarOpenBtn.addEventListener("click", () => setSidebarCollapsed(false));
+  sidebarBackdrop.addEventListener("click", () => setSidebarCollapsed(true));
+
   function goToView(key) {
     Object.keys(views).forEach((k) => { views[k].hidden = k !== key; });
     tabButtons.forEach((btn) => btn.classList.toggle("active", btn.dataset.view === key));
     if (key === "rota") markRotaBadgeSeen();
     renderAllForView(key);
   }
-  tabButtons.forEach((btn) => btn.addEventListener("click", () => goToView(btn.dataset.view)));
+  tabButtons.forEach((btn) => btn.addEventListener("click", () => {
+    goToView(btn.dataset.view);
+    if (window.matchMedia(MOBILE_QUERY).matches) setSidebarCollapsed(true);
+  }));
 
   function renderAllForView(key) {
     if (key === "overview") renderOverview();

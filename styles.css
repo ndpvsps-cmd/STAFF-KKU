@@ -109,16 +109,166 @@ input:focus, select:focus {
   letter-spacing: 0.2px;
 }
 
+/* ---- app shell: left sidebar + main content ---- */
+
+.sl-app-shell {
+  display: flex;
+  align-items: stretch;
+  min-height: 100vh;
+  position: relative;
+}
+
+.sl-sidebar {
+  width: 252px;
+  min-width: 252px;
+  flex-shrink: 0;
+  background: var(--color-panel);
+  border-right: 1px solid var(--color-border);
+  padding: 8px 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: width var(--transition), min-width var(--transition), padding var(--transition), border-color var(--transition), transform var(--transition);
+  z-index: 60;
+}
+
+.sl-app-shell.sl-sidebar-collapsed .sl-sidebar {
+  width: 0;
+  min-width: 0;
+  padding-left: 0;
+  padding-right: 0;
+  border-right-color: transparent;
+}
+
+.sl-sidebar-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.sl-sidebar .sl-header {
+  padding: 10px 0 2px;
+  text-align: left;
+  flex: 1;
+  min-width: 0;
+}
+
+.sl-sidebar .sl-header h1 {
+  font-size: 1.4rem;
+  white-space: nowrap;
+}
+
+.sl-sidebar .sl-header .subtitle {
+  font-size: 0.82rem;
+}
+
+.sl-sidebar-close-btn,
+.sl-sidebar-open-btn {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: var(--color-panel-alt);
+  color: var(--color-primary-dark);
+  font-size: 1.05rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition), transform var(--transition);
+}
+
+.sl-sidebar-close-btn:hover,
+.sl-sidebar-open-btn:hover {
+  background: var(--color-panel);
+  transform: translateY(-1px);
+}
+
+.sl-sidebar-open-btn {
+  display: none;
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 70;
+  box-shadow: var(--shadow-card);
+}
+
+.sl-app-shell.sl-sidebar-collapsed .sl-sidebar-open-btn {
+  display: flex;
+}
+
+.sl-sidebar-backdrop {
+  display: none;
+}
+
 .sl-main {
+  flex: 1;
+  min-width: 0;
   max-width: 1040px;
   margin: 0 auto;
-  padding: 8px 12px 60px;
+  padding: 20px 16px 60px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
+@media (max-width: 860px) {
+  .sl-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: 100vh;
+    transform: translateX(0);
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .sl-app-shell.sl-sidebar-collapsed .sl-sidebar {
+    width: 252px;
+    min-width: 252px;
+    padding: 8px 14px 20px;
+    border-right-color: var(--color-border);
+    transform: translateX(-100%);
+  }
+
+  .sl-app-shell:not(.sl-sidebar-collapsed) .sl-sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(40, 24, 16, 0.35);
+    z-index: 55;
+  }
+}
+
 /* ---- top-level tab nav ---- */
+
+#sl-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#sl-tabs .sl-tab {
+  flex: none;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+#sl-tabs .sl-tab .sl-badge {
+  margin-left: auto;
+}
 
 .sl-tabs {
   display: flex;

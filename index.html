@@ -26,20 +26,31 @@
     </div>
   </div>
 
-  <header class="sl-header">
-    <h1>🌅 STAFF-KKU</h1>
-    <p class="subtitle">📋 ระบบบันทึกการลา &amp; ตารางเวรบุคลากร</p>
-  </header>
+  <div class="sl-app-shell" id="app-shell">
 
-  <main class="sl-main">
+    <button type="button" class="sl-sidebar-open-btn" id="sidebar-open-btn" aria-label="แสดงเมนู">☰</button>
 
-    <nav class="sl-tabs" id="sl-tabs">
-      <button type="button" class="sl-tab active" data-view="overview">📅 ภาพรวมรายวัน</button>
-      <button type="button" class="sl-tab" data-view="rota">🚪 ตารางประจำห้อง<span class="sl-badge" id="rota-badge" hidden></span></button>
-      <button type="button" class="sl-tab" data-view="leaves">📝 บันทึกการลา</button>
-      <button type="button" class="sl-tab" data-view="admin">👥 บุคลากร/แผนก</button>
-      <button type="button" class="sl-tab" data-view="report">📊 รายงาน CSV</button>
-    </nav>
+    <aside class="sl-sidebar" id="sl-sidebar">
+      <div class="sl-sidebar-top">
+        <header class="sl-header">
+          <h1>🌅 STAFF-KKU</h1>
+          <p class="subtitle">📋 ระบบบันทึกการลา &amp; ตารางเวรบุคลากร</p>
+        </header>
+        <button type="button" class="sl-sidebar-close-btn" id="sidebar-close-btn" aria-label="ซ่อนเมนู">«</button>
+      </div>
+
+      <nav class="sl-tabs" id="sl-tabs">
+        <button type="button" class="sl-tab active" data-view="overview">📅 ภาพรวมรายวัน</button>
+        <button type="button" class="sl-tab" data-view="rota">🚪 ตารางประจำห้อง<span class="sl-badge" id="rota-badge" hidden></span></button>
+        <button type="button" class="sl-tab" data-view="leaves">📝 บันทึกการลา</button>
+        <button type="button" class="sl-tab" data-view="admin">👥 บุคลากร/แผนก</button>
+        <button type="button" class="sl-tab" data-view="report">📊 รายงาน CSV</button>
+      </nav>
+    </aside>
+
+    <div class="sl-sidebar-backdrop" id="sidebar-backdrop"></div>
+
+    <main class="sl-main">
 
     <p class="sl-inline-banner" id="conn-banner" hidden></p>
 
@@ -336,7 +347,9 @@
       <div class="sl-table" id="report-table"></div>
     </section>
 
-  </main>
+    </main>
+
+  </div>
 
   <div class="sl-modal-backdrop" id="edit-modal" hidden>
     <div class="sl-modal">
