@@ -1542,6 +1542,13 @@
   const staffAddBtn = document.getElementById("staff-add-btn");
   const staffStatusMsg = document.getElementById("staff-status-msg");
   const staffTable = document.getElementById("staff-table");
+  const staffSearchInput = document.getElementById("staff-search-input");
+
+  let staffSearchDebounce = null;
+  staffSearchInput.addEventListener("input", () => {
+    clearTimeout(staffSearchDebounce);
+    staffSearchDebounce = setTimeout(renderStaffTable, 150);
+  });
 
   deptAddBtn.addEventListener("click", async () => {
     const name = deptNameInput.value.trim();
@@ -1694,11 +1701,20 @@
       });
     }
 
+    renderStaffTable();
+  }
+
+  function renderStaffTable() {
+    const q = staffSearchInput.value.trim();
+    const rows = q ? DATA.staff.filter((s) => s.name.indexOf(q) !== -1) : DATA.staff;
+
     staffTable.innerHTML = "";
     if (!DATA.staff.length) {
       staffTable.innerHTML = '<div class="sl-empty">📭 ยังไม่มีบุคลากร</div>';
+    } else if (!rows.length) {
+      staffTable.innerHTML = '<div class="sl-empty">🔍 ไม่พบชื่อที่ตรงกัน</div>';
     } else {
-      DATA.staff.forEach((s) => {
+      rows.forEach((s) => {
         const row = document.createElement("div");
         row.className = "sl-table-row";
         row.innerHTML =
