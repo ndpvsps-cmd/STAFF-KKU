@@ -635,7 +635,7 @@
         const chips = document.createElement("div");
         chips.className = "sl-chips";
         people.forEach((p) => chips.appendChild(chipEl(p.staff, p.leave, { dateStr, role, assignment: p.assignment })));
-        chips.appendChild(addPersonChipEl(room, role, dateStr));
+        if (people.length < ROLE_MAX_PER_ROOM[role]) chips.appendChild(addPersonChipEl(room, role, dateStr));
         row.appendChild(lbl);
         row.appendChild(chips);
         card.appendChild(row);
