@@ -870,6 +870,28 @@ input:focus, select:focus {
   align-items: center;
 }
 
+.sl-overview-room-cell {
+  background: var(--color-panel-alt);
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+}
+
+.sl-overview-room-name {
+  font-weight: 700;
+  font-size: 0.86rem;
+  color: var(--color-text);
+}
+
+.sl-overview-room-dept {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--color-muted);
+}
+
 .sl-period-cell {
   background: var(--color-panel);
   padding: 6px;

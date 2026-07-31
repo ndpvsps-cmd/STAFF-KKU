@@ -599,10 +599,77 @@
     } else if (rotaState.period === "month") {
       rotaScheduleView.className = "sl-period-list";
       renderRotaPeriodGrid(monthDates(rotaState.year, rotaState.month));
+    } else if (rotaState.period === "overview") {
+      rotaScheduleView.className = "";
+      renderRotaOverviewGrid();
     } else {
       rotaScheduleView.className = "sl-room-grid";
       renderRotaScheduleDay();
     }
+  }
+
+  function extractFloor(name) {
+    const m = String(name).match(/ชั้น\s*(\d+)/);
+    return m ? parseInt(m[1], 10) : 999;
+  }
+
+  function sortRoomsByFloor(rooms) {
+    return rooms.slice().sort((a, b) => {
+      const fa = extractFloor(a.name);
+      const fb = extractFloor(b.name);
+      if (fa !== fb) return fa - fb;
+      return a.name.localeCompare(b.name, "th");
+    });
+  }
+
+  function renderRotaOverviewGrid() {
+    rotaScheduleView.innerHTML = "";
+    const rooms = sortRoomsByFloor(filteredRooms());
+    if (!rooms.length) {
+      rotaScheduleView.innerHTML = '<div class="sl-empty">🔍 ไม่พบห้องที่เลือก</div>';
+      return;
+    }
+    const dates = weekDatesAround(rotaState.year, rotaState.month, rotaState.day);
+
+    const scroll = document.createElement("div");
+    scroll.className = "sl-period-scroll";
+    const grid = document.createElement("div");
+    grid.className = "sl-period-grid";
+    grid.style.gridTemplateColumns = "180px repeat(" + dates.length + ", minmax(120px, 1fr))";
+
+    grid.appendChild(makePeriodCell("ห้อง", "sl-period-role-cell"));
+    dates.forEach((dt) => {
+      grid.appendChild(makePeriodCell(dt.label + " " + dt.wd, "sl-period-header-cell"));
+    });
+
+    rooms.forEach((room) => {
+      const nameCell = document.createElement("div");
+      nameCell.className = "sl-overview-room-cell";
+      nameCell.innerHTML =
+        '<span class="sl-overview-room-name">' + escapeHtml(room.name) + '</span>' +
+        '<span class="sl-overview-room-dept">' + escapeHtml(deptName(room.departmentId)) + '</span>';
+      grid.appendChild(nameCell);
+
+      dates.forEach((dt) => {
+        const cell = document.createElement("div");
+        cell.className = "sl-period-cell";
+        ROLE_ORDER.forEach((role) => {
+          const assigns = DATA.assignments.filter((a) =>
+            String(a.roomId) === String(room.id) && a.role === role && a.startDate <= dt.iso && a.endDate >= dt.iso
+          );
+          assigns.forEach((a) => {
+            const sm = byId(DATA.staff, a.staffId);
+            if (!sm) return;
+            const leave = leaveForStaffOnDate(a.staffId, dt.iso);
+            cell.appendChild(chipEl(sm, leave, { dateStr: dt.iso, role, assignment: a }));
+          });
+        });
+        grid.appendChild(cell);
+      });
+    });
+
+    scroll.appendChild(grid);
+    rotaScheduleView.appendChild(scroll);
   }
 
   function renderRotaScheduleDay() {
